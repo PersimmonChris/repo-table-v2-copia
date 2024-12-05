@@ -1,0 +1,101 @@
+import {
+  ARRAY_DELIMITER,
+  RANGE_DELIMITER,
+  SLIDER_DELIMITER,
+} from "@/lib/delimiters";
+import { REGIONS } from "@/constants/region";
+import { TAGS } from "@/constants/tag";
+import { z } from "zod";
+
+// https://github.com/colinhacks/zod/issues/2985#issue-2008642190
+const stringToBoolean = z
+  .string()
+  .toLowerCase()
+  .transform((val) => {
+    try {
+      return JSON.parse(val);
+    } catch (e) {
+      console.log(e);
+      return undefined;
+    }
+  })
+  .pipe(z.boolean().optional());
+
+export type ColumnSchema = {
+  id: string;
+  nome: string;
+  cognome: string;
+  citta: string;
+  data_nascita: Date;
+  cellulare: string;
+  anni_esperienza: number;
+  competenze: string;
+  tools: string[];
+  database: string[];
+  piattaforme: string[];
+  sistemi_operativi: string[];
+  linguaggi_programmazione: string[];
+  contratto_attuale: string;
+  stipendio_attuale: number;
+  scadenza_contratto: Date | null;
+  preavviso: string;
+  tipo_contratto_desiderato: string;
+  stipendio_desiderato: number;
+  note: string;
+  created_at: Date;
+};
+
+export const columnFilterSchema = z.object({
+  // Arrays con checkbox
+  tools: z
+    .string()
+    .transform((val) => val.split(ARRAY_DELIMITER))
+    .pipe(z.string().array())
+    .optional(),
+  database: z
+    .string()
+    .transform((val) => val.split(ARRAY_DELIMITER))
+    .pipe(z.string().array())
+    .optional(),
+  linguaggi_programmazione: z
+    .string()
+    .transform((val) => val.split(ARRAY_DELIMITER))
+    .pipe(z.string().array())
+    .optional(),
+  piattaforme: z
+    .string()
+    .transform((val) => val.split(ARRAY_DELIMITER))
+    .pipe(z.string().array())
+    .optional(),
+  sistemi_operativi: z
+    .string()
+    .transform((val) => val.split(ARRAY_DELIMITER))
+    .pipe(z.string().array())
+    .optional(),
+
+  // Range numerici
+  anni_esperienza: z
+    .string()
+    .transform((val) => val.split(SLIDER_DELIMITER))
+    .pipe(z.coerce.number().array().max(2))
+    .optional(),
+  stipendio_attuale: z
+    .string()
+    .transform((val) => val.split(SLIDER_DELIMITER))
+    .pipe(z.coerce.number().array().max(2))
+    .optional(),
+  stipendio_desiderato: z
+    .string()
+    .transform((val) => val.split(SLIDER_DELIMITER))
+    .pipe(z.coerce.number().array().max(2))
+    .optional(),
+
+  // Date
+  created_at: z
+    .string()
+    .transform((val) => val.split(RANGE_DELIMITER).map(Number))
+    .pipe(z.coerce.date().array())
+    .optional(),
+});
+
+export type ColumnFilterSchema = z.infer<typeof columnFilterSchema>;
