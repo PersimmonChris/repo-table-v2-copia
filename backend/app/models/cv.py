@@ -1,6 +1,13 @@
 from pydantic import BaseModel, field_validator
 from typing import Optional, List
 from datetime import date, datetime
+import json
+
+class DateEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, (date, datetime)):
+            return obj.isoformat()
+        return super().default(obj)
 
 class CV(BaseModel):
     id: Optional[str] = None
@@ -39,6 +46,15 @@ class CV(BaseModel):
     file_name: Optional[str] = None
     process_status: Optional[str] = "processing"
     
+    class Config:
+        json_encoders = {
+            date: lambda v: v.isoformat() if v else None,
+            datetime: lambda v: v.isoformat() if v else None
+        }
+        
+    def json(self, **kwargs):
+        return json.dumps(self.dict(), cls=DateEncoder)
+
     @field_validator('data_nascita', 'scadenza_contratto')
     def parse_date(cls, v):
         if isinstance(v, str):

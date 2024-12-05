@@ -242,12 +242,34 @@ async def upload_cv(files: List[UploadFile] = File(...)):
         logger.error(f"Batch upload error: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@router.get("/{cv_id}")
+async def get_cv(cv_id: str):
+    try:
+        result = supabase.from_('cv_profiles').select('*').eq('id', cv_id).single().execute()
+        
+        if not result.data:
+            raise HTTPException(status_code=404, detail="CV not found")
+            
+        return result.data
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+
 @router.put("/{cv_id}")
 async def update_cv(cv_id: str, cv: CV):
     try:
-        result = supabase.table('cv_profiles').update(
-            cv.model_dump(exclude_unset=True)  # Converte il modello Pydantic in dict
-        ).eq('id', cv_id).execute()
+        # Converti il modello in dict per Supabase
+        cv_dict = cv.model_dump(exclude_unset=True)
+        
+        # Assicurati che le date siano in formato stringa
+        if cv_dict.get('data_nascita'):
+            cv_dict['data_nascita'] = cv_dict['data_nascita'].isoformat()
+        if cv_dict.get('scadenza_contratto'):
+            cv_dict['scadenza_contratto'] = cv_dict['scadenza_contratto'].isoformat()
+            
+        result = supabase.table('cv_profiles').update(cv_dict).eq('id', cv_id).execute()
         
         if not result.data:
             raise HTTPException(status_code=404, detail="CV not found")
@@ -266,6 +288,105 @@ async def delete_cv(cv_id: str):
             raise HTTPException(status_code=404, detail="CV not found")
             
         return {"message": "CV deleted successfully"}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/filters/tools")
+async def get_tools_filters():
+    try:
+        # Ottieni tutti i CV
+        result = supabase.from_('cv_profiles').select('tools').execute()
+        
+        if not result.data:
+            return {"tools": []}
+            
+        # Estrai tutti i tools unici
+        all_tools = set()
+        for cv in result.data:
+            if cv.get('tools'):
+                all_tools.update(cv['tools'])
+        
+        # Ordina alfabeticamente
+        sorted_tools = sorted(list(all_tools))
+        
+        return {"tools": sorted_tools}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/filters/database")
+async def get_database_filters():
+    try:
+        result = supabase.from_('cv_profiles').select('database').execute()
+        
+        if not result.data:
+            return {"database": []}
+            
+        all_databases = set()
+        for cv in result.data:
+            if cv.get('database'):
+                all_databases.update(cv['database'])
+        
+        sorted_databases = sorted(list(all_databases))
+        return {"database": sorted_databases}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/filters/linguaggi")
+async def get_linguaggi_filters():
+    try:
+        result = supabase.from_('cv_profiles').select('linguaggi_programmazione').execute()
+        
+        if not result.data:
+            return {"linguaggi": []}
+            
+        all_linguaggi = set()
+        for cv in result.data:
+            if cv.get('linguaggi_programmazione'):
+                all_linguaggi.update(cv['linguaggi_programmazione'])
+        
+        sorted_linguaggi = sorted(list(all_linguaggi))
+        return {"linguaggi": sorted_linguaggi}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/filters/piattaforme")
+async def get_piattaforme_filters():
+    try:
+        result = supabase.from_('cv_profiles').select('piattaforme').execute()
+        
+        if not result.data:
+            return {"piattaforme": []}
+            
+        all_piattaforme = set()
+        for cv in result.data:
+            if cv.get('piattaforme'):
+                all_piattaforme.update(cv['piattaforme'])
+        
+        sorted_piattaforme = sorted(list(all_piattaforme))
+        return {"piattaforme": sorted_piattaforme}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/filters/sistemi-operativi")
+async def get_sistemi_operativi_filters():
+    try:
+        result = supabase.from_('cv_profiles').select('sistemi_operativi').execute()
+        
+        if not result.data:
+            return {"sistemi_operativi": []}
+            
+        all_so = set()
+        for cv in result.data:
+            if cv.get('sistemi_operativi'):
+                all_so.update(cv['sistemi_operativi'])
+        
+        sorted_so = sorted(list(all_so))
+        return {"sistemi_operativi": sorted_so}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

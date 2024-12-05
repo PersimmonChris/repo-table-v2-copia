@@ -56,6 +56,7 @@ class CVAnalyzer:
                 - Calcola gli anni di esperienza basandoti su tutte le esperienze lavorative IT
                 - Tutti i nomi di tecnologie devono essere in MAIUSCOLO
                 - La data di nascita DEVE essere nel formato DD/MM/YYYY
+                - il campo "competenze" indica in pratica il titolo/ruolo,quindi ha solo un valore, NON è un array
                 - DEVI rispondere SOLO con un oggetto JSON valido, niente testo prima o dopo
 
                 CV da analizzare:
