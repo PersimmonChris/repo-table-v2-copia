@@ -1,14 +1,17 @@
 "use client";
 
 import type { Table } from "@tanstack/react-table";
-import type { DataTableSliderFilterField } from "./types";
+import type { DataTableFilterField } from "./types";
 import { InputWithAddons } from "@/components/custom/input-with-addons";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/custom/slider";
 import { isArrayOfNumbers } from "@/lib/is-array";
 import { formatCompactNumber } from "@/lib/format";
 
-type DataTableFilterSliderProps<TData> = DataTableSliderFilterField<TData> & {
+type DataTableFilterSliderProps<TData> = Extract<
+  DataTableFilterField<TData>,
+  { type: "slider" }
+> & {
   table: Table<TData>;
 };
 

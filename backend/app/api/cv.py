@@ -45,6 +45,8 @@ async def get_cvs(
     # Filtri date
     data_dal: Optional[datetime] = None,
     data_al: Optional[datetime] = None,
+    created_at_dal: Optional[datetime] = None,
+    created_at_al: Optional[datetime] = None,
 ):
     try:
         query = supabase.from_('cv_profiles').select('*', count='exact')
@@ -86,14 +88,20 @@ async def get_cvs(
         if linguaggi:
             query = query.contains('linguaggi_programmazione', linguaggi)
             
-        # Date
+        # Date - ultimo contatto
         if data_dal:
-            query = query.gte('created_at', data_dal)
+            query = query.gte('ultimo_contatto', f"{data_dal.date()}T00:00:00")
         if data_al:
-            query = query.lte('created_at', data_al)
+            query = query.lte('ultimo_contatto', f"{data_al.date()}T23:59:59")
+            
+        # Date - created_at
+        if created_at_dal:
+            query = query.gte('created_at', created_at_dal.isoformat())
+        if created_at_al:
+            query = query.lte('created_at', created_at_al.isoformat())
             
         # Ordinamento
-        valid_sort_fields = ['nome', 'cognome', 'created_at', 'anni_esperienza']  # aggiungi tutti i campi validi
+        valid_sort_fields = ['nome', 'cognome', 'created_at', 'anni_esperienza']
         if sort_by and sort_by in valid_sort_fields:
             query = query.order(sort_by, desc=sort_desc)
         else:
@@ -263,11 +271,13 @@ async def update_cv(cv_id: str, cv: CV):
         # Converti il modello in dict per Supabase
         cv_dict = cv.model_dump(exclude_unset=True)
         
-        # Assicurati che le date siano in formato stringa
+        # Assicurati che tutte le date siano in formato stringa
         if cv_dict.get('data_nascita'):
             cv_dict['data_nascita'] = cv_dict['data_nascita'].isoformat()
         if cv_dict.get('scadenza_contratto'):
             cv_dict['scadenza_contratto'] = cv_dict['scadenza_contratto'].isoformat()
+        if cv_dict.get('ultimo_contatto'):
+            cv_dict['ultimo_contatto'] = cv_dict['ultimo_contatto'].isoformat()
             
         result = supabase.table('cv_profiles').update(cv_dict).eq('id', cv_id).execute()
         

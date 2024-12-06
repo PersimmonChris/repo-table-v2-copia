@@ -1,10 +1,12 @@
 "use client";
 
+import type { ColumnDef } from "@tanstack/react-table";
 import type { DataTableFilterField } from "@/components/data-table/types";
 import type { ColumnSchema } from "./schema";
-import { subDays, subHours } from "date-fns";
+import { subDays, subHours, format } from "date-fns";
+import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 
-// Dati di esempio che corrispondono al nostro schema
+// Aggiorniamo i dati di esempio con i nuovi campi
 export const data: ColumnSchema[] = [
   {
     id: "1",
@@ -28,6 +30,8 @@ export const data: ColumnSchema[] = [
     stipendio_desiderato: 55000,
     note: "",
     created_at: subDays(new Date(), 1),
+    email: "mario.rossi@example.com",
+    ultimo_contatto: subDays(new Date(), 5),
   },
   {
     id: "2",
@@ -51,10 +55,27 @@ export const data: ColumnSchema[] = [
     stipendio_desiderato: 65000,
     note: "",
     created_at: subHours(new Date(), 12),
+    email: "laura.bianchi@example.com",
+    ultimo_contatto: subDays(new Date(), 2),
   },
 ];
 
 export const filterFields: DataTableFilterField<ColumnSchema>[] = [
+  // Data ultimo contatto
+  {
+    label: "Ultimo Contatto",
+    value: "ultimo_contatto",
+    type: "timerange",
+    defaultOpen: true,
+  },
+  // Data inserimento
+  {
+    label: "Data Inserimento",
+    value: "created_at",
+    type: "timerange",
+    defaultOpen: true,
+  },
+
   // Arrays con checkbox
   {
     label: "Tools",
@@ -62,12 +83,7 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     type: "checkbox",
     defaultOpen: true,
     enableSearch: true,
-    options: Array.from(
-      new Set(data.flatMap((item) => item.tools))
-    ).map((tool) => ({
-      label: tool,
-      value: tool,
-    })),
+    options: [],
   },
   {
     label: "Database",
@@ -75,12 +91,7 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     type: "checkbox",
     defaultOpen: true,
     enableSearch: true,
-    options: Array.from(
-      new Set(data.flatMap((item) => item.database))
-    ).map((db) => ({
-      label: db,
-      value: db,
-    })),
+    options: [],
   },
   {
     label: "Linguaggi",
@@ -88,12 +99,7 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     type: "checkbox",
     defaultOpen: true,
     enableSearch: true,
-    options: Array.from(
-      new Set(data.flatMap((item) => item.linguaggi_programmazione))
-    ).map((lang) => ({
-      label: lang,
-      value: lang,
-    })),
+    options: [],
   },
   {
     label: "Piattaforme",
@@ -101,12 +107,7 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     type: "checkbox",
     defaultOpen: true,
     enableSearch: true,
-    options: Array.from(
-      new Set(data.flatMap((item) => item.piattaforme))
-    ).map((platform) => ({
-      label: platform,
-      value: platform,
-    })),
+    options: [],
   },
   {
     label: "Sistemi Operativi",
@@ -114,12 +115,7 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     type: "checkbox",
     defaultOpen: true,
     enableSearch: true,
-    options: Array.from(
-      new Set(data.flatMap((item) => item.sistemi_operativi))
-    ).map((os) => ({
-      label: os,
-      value: os,
-    })),
+    options: [],
   },
 
   // Range numerici
@@ -137,7 +133,7 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     value: "stipendio_attuale",
     type: "slider",
     min: 0,
-    max: 200000,
+    max: 100000,
     defaultOpen: true,
     trailing: "€",
   },
@@ -146,16 +142,39 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     value: "stipendio_desiderato",
     type: "slider",
     min: 0,
-    max: 200000,
+    max: 100000,
     defaultOpen: true,
     trailing: "€",
   },
+];
 
-  // Data
+export const columns: ColumnDef<ColumnSchema>[] = [
   {
-    label: "Data Inserimento",
-    value: "created_at",
-    type: "timerange",
-    defaultOpen: true,
+    accessorKey: "nome",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Nome" />,
+    cell: ({ row }) => <div>{row.getValue("nome")}</div>,
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "ultimo_contatto",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ultimo Contatto" />
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue("ultimo_contatto") as Date | null;
+      return date ? format(date, "dd/MM/yyyy") : "N/A";
+    },
+    enableSorting: true,
+    enableHiding: true,
   },
 ];

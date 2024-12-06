@@ -40,6 +40,7 @@ class CVAnalyzer:
                     "cognome": "Rossi",
                     "citta": "Milano",
                     "data_nascita": "15/05/1990",
+                    "email": "mario.rossi@gmail.com",
                     "cellulare": "333123456",
                     "anni_esperienza": 5,
                     "competenze": "Analista Funzionale",

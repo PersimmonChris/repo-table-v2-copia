@@ -18,6 +18,7 @@ export interface GetCVsParams {
     anni_esperienza?: [number, number];
     stipendio_attuale?: [number, number];
     stipendio_desiderato?: [number, number];
+    ultimo_contatto?: Date[];
     created_at?: Date[];
 }
 
@@ -41,6 +42,20 @@ export async function getCVs(params: GetCVsParams) {
     if (params.anni_esperienza) {
         searchParams.set('anni_esperienza_min', params.anni_esperienza[0].toString());
         searchParams.set('anni_esperienza_max', params.anni_esperienza[1].toString());
+    }
+
+    // Aggiungiamo questo per le date
+    if (params.ultimo_contatto?.length) {
+        searchParams.set('data_dal', params.ultimo_contatto[0].toISOString());
+        if (params.ultimo_contatto.length > 1) {
+            searchParams.set('data_al', params.ultimo_contatto[1].toISOString());
+        }
+    }
+    if (params.created_at?.length) {
+        searchParams.set('created_at_dal', params.created_at[0].toISOString());
+        if (params.created_at.length > 1) {
+            searchParams.set('created_at_al', params.created_at[1].toISOString());
+        }
     }
 
     const response = await fetch(
@@ -80,26 +95,33 @@ export async function getCV(id: string): Promise<ColumnSchema> {
 }
 
 export async function updateCV(id: string, data: Partial<ColumnSchema>): Promise<ColumnSchema> {
+    console.log('=== UPDATE CV START ===');
+    console.log('ID:', id);
     console.log('Original data:', data);
 
-    // Rimuovi created_at e gestisci scadenza_contratto
+    // Rimuovi created_at e gestisci le date
     const { created_at, ...restData } = data;
     const dataToSend = {
         ...restData,
         // Converti le date in formato YYYY-MM-DD
         scadenza_contratto: data.scadenza_contratto
             ? (data.scadenza_contratto instanceof Date
-                ? data.scadenza_contratto.toISOString().slice(0, 10)  // YYYY-MM-DD
+                ? data.scadenza_contratto.toISOString().split('T')[0]
                 : String(data.scadenza_contratto).slice(0, 10))
             : null,
         data_nascita: data.data_nascita
             ? (data.data_nascita instanceof Date
-                ? data.data_nascita.toISOString().slice(0, 10)
+                ? data.data_nascita.toISOString().split('T')[0]
                 : String(data.data_nascita).slice(0, 10))
-            : null
+            : null,
+        ultimo_contatto: data.ultimo_contatto
+            ? (data.ultimo_contatto instanceof Date
+                ? data.ultimo_contatto.toISOString().split('T')[0]
+                : String(data.ultimo_contatto).slice(0, 10))
+            : null,
     };
 
-    console.log('Sending data:', dataToSend);
+    console.log('Data to send:', JSON.stringify(dataToSend, null, 2));
 
     try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cv/${id}`, {
@@ -110,15 +132,17 @@ export async function updateCV(id: string, data: Partial<ColumnSchema>): Promise
             body: JSON.stringify(dataToSend),
         });
 
+        console.log('Response status:', response.status);
+        const responseData = await response.json();
+        console.log('Response data:', responseData);
+
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            console.error('Server error:', errorData);
-            throw new Error(errorData.detail || `Failed to update CV (${response.status})`);
+            console.error('Server error:', responseData);
+            throw new Error(responseData.detail || `Failed to update CV (${response.status})`);
         }
 
-        const updatedCV = await response.json();
-        console.log('Update successful:', updatedCV);
-        return updatedCV;
+        console.log('=== UPDATE CV END ===');
+        return responseData;
     } catch (error) {
         console.error('Update failed:', error);
         throw error;

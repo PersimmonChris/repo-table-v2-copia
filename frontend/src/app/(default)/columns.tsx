@@ -110,6 +110,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Linguaggi" />
     ),
+    meta: {
+      label: "Linguaggi"
+    },
     cell: ({ row }) => {
       const value = row.getValue("linguaggi_programmazione");
       if (!value || !Array.isArray(value)) return null;
@@ -303,5 +306,26 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       if (typeof value !== "string") return null;
       return <div>{value}</div>;
     },
+  },
+  {
+    accessorKey: "email",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Email" />
+    ),
+    cell: ({ row }) => <div>{row.getValue("email")}</div>,
+    enableSorting: true,
+    enableHiding: true,
+  },
+  {
+    accessorKey: "ultimo_contatto",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Ultimo Contatto" />
+    ),
+    cell: ({ row }) => {
+      const date = row.getValue("ultimo_contatto") as Date | null;
+      return date ? format(date, "dd/MM/yyyy") : "N/A";
+    },
+    enableSorting: true,
+    enableHiding: true,
   },
 ];

@@ -17,6 +17,14 @@ export default function Page({
   const [page, setPage] = React.useState(1);
   const [pageSize, setPageSize] = React.useState(10);
 
+  React.useEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.has('ultimo_contatto')) {
+      url.searchParams.delete('ultimo_contatto');
+      window.history.replaceState({}, '', url);
+    }
+  }, []);
+
   const parsedSearch: ParsedSearchParams = {};
   try {
     Object.entries(searchParams).forEach(([key, value]) => {
@@ -40,9 +48,9 @@ export default function Page({
           }
           break;
 
-        case 'created_at':
+        case 'ultimo_contatto':
           const dateArray = (Array.isArray(value) ? value : [value])
-            .map(v => new Date(v))
+            .map(v => new Date(parseInt(v)))
             .filter(d => !isNaN(d.getTime()));
           if (dateArray.length > 0) {
             parsedSearch[key] = dateArray;
@@ -64,6 +72,7 @@ export default function Page({
           tools: parsedSearch.tools,
           database: parsedSearch.database,
           linguaggi_programmazione: parsedSearch.linguaggi_programmazione,
+          ultimo_contatto: parsedSearch.ultimo_contatto,
         };
 
         if (parsedSearch.anni_esperienza?.length === 2) {
@@ -75,8 +84,8 @@ export default function Page({
         if (parsedSearch.stipendio_desiderato?.length === 2) {
           params.stipendio_desiderato = parsedSearch.stipendio_desiderato as [number, number];
         }
-        if (parsedSearch.created_at?.length) {
-          params.created_at = parsedSearch.created_at;
+        if (parsedSearch.ultimo_contatto?.length) {
+          params.ultimo_contatto = parsedSearch.ultimo_contatto;
         }
 
         return await getCVs(params);

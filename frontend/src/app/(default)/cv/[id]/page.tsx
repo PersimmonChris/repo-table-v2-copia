@@ -176,6 +176,12 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                     </h1>
                     <p className="text-sm text-muted-foreground">
                         Inserito il {format(new Date(cv.created_at), "dd/MM/yyyy")}
+                        {cv.ultimo_contatto && (
+                            <>
+                                {" "}• Ultimo contatto il{" "}
+                                {format(new Date(cv.ultimo_contatto), "dd/MM/yyyy")}
+                            </>
+                        )}
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
@@ -211,13 +217,14 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
 
             {/* Sezioni */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Dati Anagrafici */}
+                {/* Dati Anagrafici e Posizione Contrattuale */}
                 <Card className="p-6">
-                    <Accordion type="single" collapsible defaultValue="dati-anagrafici">
-                        <AccordionItem value="dati-anagrafici">
-                            <AccordionTrigger>Dati Anagrafici</AccordionTrigger>
+                    <Accordion type="single" collapsible defaultValue="dati-contrattuali">
+                        <AccordionItem value="dati-contrattuali">
+                            <AccordionTrigger>Dati Anagrafici e Posizione Contrattuale</AccordionTrigger>
                             <AccordionContent className="pt-2">
                                 <div className="grid gap-6">
+                                    {/* Dati Anagrafici */}
                                     <div className="grid grid-cols-2 gap-6">
                                         <div className="space-y-3 px-1">
                                             <span className="font-medium block">Nome:</span>
@@ -308,6 +315,188 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 </div>
                                             ) : (
                                                 <span>{cv.anni_esperienza}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Email:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="email"
+                                                        value={editedData.email || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            email: e.target.value
+                                                        })}
+                                                        placeholder="Email"
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>{cv.email}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Ultimo Contatto:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="date"
+                                                        value={editedData.ultimo_contatto ?
+                                                            new Date(editedData.ultimo_contatto).toISOString().split('T')[0] :
+                                                            ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            ultimo_contatto: e.target.value ? new Date(e.target.value) : null
+                                                        })}
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>
+                                                    {cv.ultimo_contatto
+                                                        ? format(new Date(cv.ultimo_contatto), "dd/MM/yyyy")
+                                                        : "N/A"}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1 col-span-2">
+                                            <span className="font-medium block">Note:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Textarea
+                                                        value={editedData.note || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            note: e.target.value
+                                                        })}
+                                                        placeholder="Inserisci note..."
+                                                        className="w-full resize-none h-20"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <p className="whitespace-pre-wrap">
+                                                    {cv.note || "Nessuna nota"}
+                                                </p>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    {/* Separatore */}
+                                    <div className="border-t border-border" />
+
+                                    {/* Posizione Contrattuale */}
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Contratto Attuale:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        value={editedData.contratto_attuale || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            contratto_attuale: e.target.value
+                                                        })}
+                                                        placeholder="Contratto attuale"
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>{cv.contratto_attuale}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Stipendio Attuale:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="number"
+                                                        value={editedData.stipendio_attuale || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            stipendio_attuale: parseInt(e.target.value) || 0
+                                                        })}
+                                                        placeholder="Stipendio attuale"
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>€ {cv.stipendio_attuale?.toLocaleString()}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Scadenza Contratto:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="date"
+                                                        value={editedData.scadenza_contratto ?
+                                                            new Date(editedData.scadenza_contratto).toISOString().split('T')[0] :
+                                                            ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            scadenza_contratto: e.target.value ? new Date(e.target.value) : null
+                                                        })}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>
+                                                    {cv.scadenza_contratto
+                                                        ? format(new Date(cv.scadenza_contratto), "dd/MM/yyyy")
+                                                        : "N/A"}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Preavviso:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        value={editedData.preavviso || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            preavviso: e.target.value
+                                                        })}
+                                                        placeholder="Preavviso"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>{cv.preavviso}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Contratto Desiderato:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        value={editedData.tipo_contratto_desiderato || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            tipo_contratto_desiderato: e.target.value
+                                                        })}
+                                                        placeholder="Contratto desiderato"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>{cv.tipo_contratto_desiderato}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-3 px-1">
+                                            <span className="font-medium block">Stipendio Desiderato:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="number"
+                                                        value={editedData.stipendio_desiderato || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            stipendio_desiderato: parseInt(e.target.value) || 0
+                                                        })}
+                                                        placeholder="Stipendio desiderato"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>€ {cv.stipendio_desiderato?.toLocaleString()}</span>
                                             )}
                                         </div>
                                     </div>
@@ -623,161 +812,6 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                         )}
                                     </div>
                                 </div>
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </Card>
-
-                {/* Posizione Contrattuale */}
-                <Card className="p-6">
-                    <Accordion type="single" collapsible defaultValue="contratto">
-                        <AccordionItem value="contratto">
-                            <AccordionTrigger>Posizione Contrattuale</AccordionTrigger>
-                            <AccordionContent className="pt-2">
-                                <div className="grid gap-6">
-                                    <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Contratto Attuale:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        value={editedData.contratto_attuale || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            contratto_attuale: e.target.value
-                                                        })}
-                                                        placeholder="Contratto attuale"
-                                                        className="w-full"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>{cv.contratto_attuale}</span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Stipendio Attuale:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        type="number"
-                                                        value={editedData.stipendio_attuale || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            stipendio_attuale: parseInt(e.target.value) || 0
-                                                        })}
-                                                        placeholder="Stipendio attuale"
-                                                        className="w-full"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>€ {cv.stipendio_attuale?.toLocaleString()}</span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Scadenza Contratto:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        type="date"
-                                                        value={editedData.scadenza_contratto ?
-                                                            new Date(editedData.scadenza_contratto).toISOString().split('T')[0] :
-                                                            ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            scadenza_contratto: e.target.value ? new Date(e.target.value) : null
-                                                        })}
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>
-                                                    {cv.scadenza_contratto
-                                                        ? format(new Date(cv.scadenza_contratto), "dd/MM/yyyy")
-                                                        : "N/A"}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Preavviso:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        value={editedData.preavviso || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            preavviso: e.target.value
-                                                        })}
-                                                        placeholder="Preavviso"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>{cv.preavviso}</span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Contratto Desiderato:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        value={editedData.tipo_contratto_desiderato || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            tipo_contratto_desiderato: e.target.value
-                                                        })}
-                                                        placeholder="Contratto desiderato"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>{cv.tipo_contratto_desiderato}</span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Stipendio Desiderato:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        type="number"
-                                                        value={editedData.stipendio_desiderato || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            stipendio_desiderato: parseInt(e.target.value) || 0
-                                                        })}
-                                                        placeholder="Stipendio desiderato"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>€ {cv.stipendio_desiderato?.toLocaleString()}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-                </Card>
-
-                {/* Note */}
-                <Card className="p-6">
-                    <Accordion type="single" collapsible defaultValue="note">
-                        <AccordionItem value="note">
-                            <AccordionTrigger>Note</AccordionTrigger>
-                            <AccordionContent className="pt-2">
-                                {isEditing ? (
-                                    <div className="pt-1">
-                                        <Textarea
-                                            value={editedData.note || ''}
-                                            onChange={(e) => setEditedData({
-                                                ...editedData,
-                                                note: e.target.value
-                                            })}
-                                            placeholder="Inserisci note..."
-                                            className="min-h-[100px] w-full"
-                                        />
-                                    </div>
-                                ) : (
-                                    <p className="whitespace-pre-wrap px-1">
-                                        {cv.note || "Nessuna nota"}
-                                    </p>
-                                )}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>

@@ -27,8 +27,10 @@ export type ColumnSchema = {
   cognome: string;
   citta: string;
   data_nascita: Date;
-  cellulare: string;
-  anni_esperienza: number;
+  cellulare: string | null;
+  email: string | null;
+  ultimo_contatto: Date | null;
+  anni_esperienza: number | null;
   competenze: string;
   tools: string[];
   database: string[];
@@ -90,8 +92,8 @@ export const columnFilterSchema = z.object({
     .pipe(z.coerce.number().array().max(2))
     .optional(),
 
-  // Date
-  created_at: z
+  // Data - cambiato da created_at a ultimo_contatto
+  ultimo_contatto: z
     .string()
     .transform((val) => val.split(RANGE_DELIMITER).map(Number))
     .pipe(z.coerce.date().array())

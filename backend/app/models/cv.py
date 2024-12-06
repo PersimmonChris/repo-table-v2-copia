@@ -18,9 +18,9 @@ class CV(BaseModel):
     nome: Optional[str] = None
     citta: Optional[str] = None
     data_nascita: Optional[date] = None
-    
-    # Contatti
     cellulare: Optional[str] = None
+    email: Optional[str] = None
+    ultimo_contatto: Optional[date] = None
     anni_esperienza: Optional[int] = None
     
     # Competenze
@@ -55,7 +55,7 @@ class CV(BaseModel):
     def json(self, **kwargs):
         return json.dumps(self.dict(), cls=DateEncoder)
 
-    @field_validator('data_nascita', 'scadenza_contratto')
+    @field_validator('data_nascita', 'scadenza_contratto', 'ultimo_contatto')
     def parse_date(cls, v):
         if isinstance(v, str):
             try:

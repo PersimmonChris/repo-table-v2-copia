@@ -32,7 +32,7 @@ interface DataTableViewOptionsProps<TData> {
 
 export function DataTableViewOptions<TData>({
   table,
-  enableOrdering = false,
+  enableOrdering = true,
 }: DataTableViewOptionsProps<TData>) {
   const [open, setOpen] = useState(false);
   const [drag, setDrag] = useState(false);
@@ -45,8 +45,7 @@ export function DataTableViewOptions<TData>({
       table
         .getAllColumns()
         .filter(
-          (column) =>
-            typeof column.accessorFn !== "undefined" && column.getCanHide()
+          (column) => typeof column.accessorFn !== "undefined"
         )
         .sort((a, b) => {
           return columnOrder.indexOf(a.id) - columnOrder.indexOf(b.id);
@@ -65,7 +64,7 @@ export function DataTableViewOptions<TData>({
           className="h-9 w-9"
         >
           <Settings2 className="h-4 w-4" />
-          <span className="sr-only">View</span>
+          <span className="sr-only">Visualizza colonne</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-[200px] p-0">
@@ -73,11 +72,10 @@ export function DataTableViewOptions<TData>({
           <CommandInput
             value={search}
             onValueChange={setSearch}
-            placeholder="Cerca opzioni..."
+            placeholder="Cerca colonne..."
           />
           <CommandList>
-            <CommandEmpty>Nessuna opzione trovata.</CommandEmpty>
-            {/* TODO: add a "RESET REORDERING ROW" */}
+            <CommandEmpty>Nessuna colonna trovata.</CommandEmpty>
             <CommandGroup>
               <Sortable
                 value={columns.map((c) => ({ id: c.id }))}
@@ -93,11 +91,13 @@ export function DataTableViewOptions<TData>({
                   <SortableItem key={column.id} value={column.id} asChild>
                     <CommandItem
                       value={column.id}
-                      onSelect={() =>
-                        column.toggleVisibility(!column.getIsVisible())
-                      }
+                      onSelect={() => {
+                        if (column.getCanHide()) {
+                          column.toggleVisibility(!column.getIsVisible());
+                        }
+                      }}
                       className={"capitalize"}
-                      disabled={drag}
+                      disabled={drag || !column.getCanHide()}
                     >
                       <div
                         className={cn(
