@@ -49,11 +49,24 @@ export default function Page({
           break;
 
         case 'ultimo_contatto':
-          const dateArray = (Array.isArray(value) ? value : [value])
+          const contactDateArray = (Array.isArray(value) ? value : [value])
             .map(v => new Date(parseInt(v)))
             .filter(d => !isNaN(d.getTime()));
-          if (dateArray.length > 0) {
-            parsedSearch[key] = dateArray;
+          if (contactDateArray.length > 0) {
+            parsedSearch[key] = contactDateArray;
+          }
+          break;
+
+        case 'created_at':
+          const createdDateArray = (Array.isArray(value) ? value : [value])
+            .map(v => {
+              const timestamp = parseInt(v);
+              if (isNaN(timestamp)) return null;
+              return new Date(timestamp);
+            })
+            .filter((d): d is Date => d !== null && !isNaN(d.getTime()));
+          if (createdDateArray.length > 0) {
+            parsedSearch[key] = createdDateArray;
           }
           break;
       }
@@ -73,6 +86,7 @@ export default function Page({
           database: parsedSearch.database,
           linguaggi_programmazione: parsedSearch.linguaggi_programmazione,
           ultimo_contatto: parsedSearch.ultimo_contatto,
+          created_at: parsedSearch.created_at,
         };
 
         if (parsedSearch.anni_esperienza?.length === 2) {

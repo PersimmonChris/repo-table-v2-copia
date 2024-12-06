@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Query
 from fastapi.responses import JSONResponse
 from typing import List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
 from app.models.cv import CV
 from app.services.cv_parser import parse_cv
@@ -49,6 +49,7 @@ async def get_cvs(
     created_at_al: Optional[datetime] = None,
 ):
     try:
+        print("Backend received date:", created_at_dal)
         query = supabase.from_('cv_profiles').select('*', count='exact')
         
         # Applicazione filtri
@@ -78,7 +79,10 @@ async def get_cvs(
             
         # Filtri array
         if tools:
+            print("\n=== TOOLS FILTER DEBUG ===")
+            print(f"Received tools: {tools}")
             query = query.contains('tools', tools)
+            print("Query:", query._compiler().get_sql())
         if database:
             query = query.contains('database', database)
         if piattaforme:
@@ -96,9 +100,12 @@ async def get_cvs(
             
         # Date - created_at
         if created_at_dal:
-            query = query.gte('created_at', created_at_dal.isoformat())
+            print("\n=== DATE FILTER DEBUG ===")
+            print(f"Received date: {created_at_dal}")
+            query = query.filter('created_at', 'gte', created_at_dal)
+            print("Query:", query._compiler().get_sql())
         if created_at_al:
-            query = query.lte('created_at', created_at_al.isoformat())
+            query = query.filter('created_at', 'lte', created_at_al)
             
         # Ordinamento
         valid_sort_fields = ['nome', 'cognome', 'created_at', 'anni_esperienza']

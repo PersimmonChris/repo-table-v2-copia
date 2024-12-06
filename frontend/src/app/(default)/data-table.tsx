@@ -7,6 +7,7 @@ import type {
   SortingState,
   Table as TTable,
   VisibilityState,
+  FilterFn,
 } from "@tanstack/react-table";
 import {
   flexRender,
@@ -38,6 +39,7 @@ import { cn } from "@/lib/utils";
 import { useLocalStorage } from "@/hooks/use-local-storage";
 import { useQueryStates } from "nuqs";
 import { searchParamsParser } from "./search-params";
+import { inDateRange } from "@/lib/table/filterfns";
 
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -79,6 +81,9 @@ export function DataTable<TData, TValue>({
     data,
     columns,
     state: { columnFilters, sorting, columnVisibility, pagination: paginationState },
+    filterFns: {
+      inDateRange,
+    },
     onColumnVisibilityChange: setColumnVisibility,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,

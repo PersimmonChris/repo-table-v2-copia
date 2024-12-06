@@ -3,9 +3,12 @@ export function isArrayOfNumbers(arr: any): arr is number[] {
   return arr.every((item) => typeof item === "number");
 }
 
-export function isArrayOfDates(arr: any): arr is Date[] {
-  if (!Array.isArray(arr)) return false;
-  return arr.every((item) => item instanceof Date);
+export function isArrayOfDates(arr: unknown): arr is Date[] {
+  return (
+    Array.isArray(arr) &&
+    arr.length > 0 &&
+    arr.every((item) => item instanceof Date)
+  );
 }
 
 export function isArrayOfStrings(arr: any): arr is string[] {

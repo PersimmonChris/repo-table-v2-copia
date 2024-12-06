@@ -52,10 +52,8 @@ export async function getCVs(params: GetCVsParams) {
         }
     }
     if (params.created_at?.length) {
+        console.log('Frontend sending date:', params.created_at[0]);
         searchParams.set('created_at_dal', params.created_at[0].toISOString());
-        if (params.created_at.length > 1) {
-            searchParams.set('created_at_al', params.created_at[1].toISOString());
-        }
     }
 
     const response = await fetch(

@@ -83,3 +83,5 @@ export type DataTableFilterField<TData> = {
       presets?: DatePreset[];
     }
   );
+
+export type DataTableTimerangeFilterField<TData> = Base<TData> & Timerange;

@@ -152,21 +152,17 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     ),
     cell: ({ row }) => {
       const value = row.getValue("created_at");
-      if (!value || !(typeof value === 'string' || value instanceof Date)) {
-        return null;
-      }
-
-      const formattedDate = React.useMemo(() => {
-        const date = typeof value === 'string' ? new Date(value) : value;
-        return format(date, "dd/MM/yyyy");
-      }, [value]);
-
+      if (!value || (typeof value !== 'string' && !(value instanceof Date))) return null;
+      const date = typeof value === 'string' ? new Date(value) : value;
       return (
-        <div suppressHydrationWarning className="text-xs text-muted-foreground">
-          {formattedDate}
+        <div className="font-mono whitespace-nowrap">
+          {format(date, "dd/MM/yyyy HH:mm:ss")}
         </div>
       );
     },
+    filterFn: "inDateRange",
+    enableSorting: true,
+    enableHiding: true,
   },
   {
     accessorKey: "database",
@@ -322,9 +318,12 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       <DataTableColumnHeader column={column} title="Ultimo Contatto" />
     ),
     cell: ({ row }) => {
-      const date = row.getValue("ultimo_contatto") as Date | null;
-      return date ? format(date, "dd/MM/yyyy") : "N/A";
+      const value = row.getValue("ultimo_contatto");
+      if (!value || (typeof value !== 'string' && !(value instanceof Date))) return "N/A";
+      const date = typeof value === 'string' ? new Date(value) : value;
+      return format(date, "dd/MM/yyyy");
     },
+    filterFn: "inDateRange",
     enableSorting: true,
     enableHiding: true,
   },

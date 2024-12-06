@@ -6,6 +6,8 @@ import {
 import { REGIONS } from "@/constants/region";
 import { TAGS } from "@/constants/tag";
 import { z } from "zod";
+import { isArrayOfDates } from "@/lib/is-array";
+import { isSameDay } from "date-fns";
 
 // https://github.com/colinhacks/zod/issues/2985#issue-2008642190
 const stringToBoolean = z
@@ -97,6 +99,18 @@ export const columnFilterSchema = z.object({
     .string()
     .transform((val) => val.split(RANGE_DELIMITER).map(Number))
     .pipe(z.coerce.date().array())
+    .optional(),
+  created_at: z
+    .string()
+    .transform((val) => val.split(RANGE_DELIMITER).map(Number))
+    .pipe(z.coerce.date().array())
+    .refine((dates) => {
+      if (dates.length === 1) return true;
+      if (dates.length === 2) {
+        return dates[0].getTime() <= dates[1].getTime();
+      }
+      return false;
+    }, "Invalid date range")
     .optional(),
 });
 

@@ -20,6 +20,7 @@ export interface ParsedSearchParams {
   stipendio_attuale?: number[];
   stipendio_desiderato?: number[];
   ultimo_contatto?: Date[];
+  created_at?: Date[];
 }
 
 export const searchParamsParser = {
@@ -35,6 +36,8 @@ export const searchParamsParser = {
 
   // Data
   ultimo_contatto: parseAsArrayOf(parseAsTimestamp, RANGE_DELIMITER),
+  created_at: parseAsArrayOf(parseAsTimestamp, RANGE_DELIMITER),
+
 };
 
 export const searchParamsCache = createSearchParamsCache(searchParamsParser);
