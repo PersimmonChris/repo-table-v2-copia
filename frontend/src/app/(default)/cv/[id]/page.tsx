@@ -88,9 +88,9 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
             queryClient.invalidateQueries({ queryKey: ['filters'] });
 
             toast({
-                variant: "default",
-                title: "Successo",
-                description: "Modifiche salvate con successo"
+                title: "Salvato!",
+                description: "Le modifiche sono state salvate con successo",
+                variant: "success"
             });
         } catch (error) {
             console.error('Error saving:', error);

@@ -225,7 +225,7 @@ async def upload_cv(files: List[UploadFile] = File(...)):
                     responses.append({
                         "filename": file.filename,
                         "status": "success",
-                        "message": "CV processed successfully",
+                        "message": "CV processato con successo",
                         "cv_id": profile_id
                     })
 
@@ -234,7 +234,7 @@ async def upload_cv(files: List[UploadFile] = File(...)):
                     responses.append({
                         "filename": file.filename,
                         "status": "error",
-                        "message": f"Error storing CV: {str(e)}"
+                        "message": f"Errore durante il salvataggio del CV: {str(e)}"
                     })
 
             except Exception as e:
@@ -248,7 +248,7 @@ async def upload_cv(files: List[UploadFile] = File(...)):
         return JSONResponse(
             status_code=200,
             content={
-                "message": "Batch processing completed",
+                "message": "Elaborazione batch completata",
                 "results": responses
             }
         )

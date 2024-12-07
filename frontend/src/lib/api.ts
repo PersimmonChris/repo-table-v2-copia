@@ -205,4 +205,33 @@ export async function getSistemiOperativiFilters(): Promise<string[]> {
 
     const data = await response.json();
     return data.sistemi_operativi;
+}
+
+export interface UploadResponse {
+    message: string;
+    results: Array<{
+        filename: string;
+        status: 'success' | 'error';
+        message: string;
+        cv_id?: string;
+    }>;
+}
+
+export async function uploadCVs(files: File[]): Promise<UploadResponse> {
+    const formData = new FormData();
+    files.forEach(file => {
+        formData.append('files', file);
+    });
+
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cv/upload`, {
+        method: 'POST',
+        body: formData,
+    });
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.detail || 'Failed to upload CVs');
+    }
+
+    return response.json();
 } 
