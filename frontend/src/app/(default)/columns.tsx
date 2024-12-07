@@ -250,7 +250,14 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     cell: ({ row }) => {
       const value = row.getValue("contratto_attuale");
       if (typeof value !== "string") return null;
-      return <div>{value}</div>;
+      return (
+        <Badge
+          variant="outline"
+          className="bg-[#FAEBDD] text-[#D9730D] border-transparent"
+        >
+          {value}
+        </Badge>
+      );
     },
   },
   {
@@ -300,7 +307,14 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     cell: ({ row }) => {
       const value = row.getValue("competenze");
       if (typeof value !== "string") return null;
-      return <div>{value}</div>;
+      return (
+        <Badge
+          variant="outline"
+          className="bg-[#ddf4ff] text-[#0969da] border-transparent "
+        >
+          {value}
+        </Badge>
+      );
     },
   },
   {
@@ -326,5 +340,23 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     filterFn: "inDateRange",
     enableSorting: true,
     enableHiding: true,
+  },
+  {
+    accessorKey: "tipo_contratto_desiderato",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Contratto Desiderato" />
+    ),
+    cell: ({ row }) => {
+      const value = row.getValue("tipo_contratto_desiderato");
+      if (typeof value !== "string") return null;
+      return (
+        <Badge
+          variant="outline"
+          className="bg-[#FAEBDD] text-[#D9730D] border-transparent"
+        >
+          {value}
+        </Badge>
+      );
+    },
   },
 ];

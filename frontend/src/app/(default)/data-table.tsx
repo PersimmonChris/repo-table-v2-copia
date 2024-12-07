@@ -20,6 +20,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import * as React from "react";
+import { useEffect } from "react";
 
 import {
   Table,
@@ -76,18 +77,46 @@ export function DataTable<TData, TValue>({
     true
   );
   const [_, setSearch] = useQueryStates(searchParamsParser);
+  const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
+
+  useEffect(() => {
+    try {
+      const savedFilters = localStorage.getItem('tableFilters');
+      const savedColumnOrder = localStorage.getItem('tableColumnOrder');
+
+      if (savedFilters) {
+        setColumnFilters(JSON.parse(savedFilters));
+      }
+
+      if (savedColumnOrder) {
+        setColumnOrder(JSON.parse(savedColumnOrder));
+      }
+    } catch (error) {
+      console.error('Error parsing saved table state:', error);
+      // Pulisci il localStorage corrotto
+      localStorage.removeItem('tableFilters');
+      localStorage.removeItem('tableColumnOrder');
+    }
+  }, []);
 
   const table = useReactTable({
     data,
     columns,
-    state: { columnFilters, sorting, columnVisibility, pagination: paginationState },
+    state: { columnFilters, sorting, columnVisibility, pagination: paginationState, columnOrder },
     filterFns: {
       inDateRange,
     },
     onColumnVisibilityChange: setColumnVisibility,
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: (filters) => {
+      setColumnFilters(filters);
+      localStorage.setItem('tableFilters', JSON.stringify(filters));
+    },
     onSortingChange: setSorting,
     onPaginationChange: setPaginationState,
+    onColumnOrderChange: (order) => {
+      setColumnOrder(order);
+      localStorage.setItem('tableColumnOrder', JSON.stringify(order));
+    },
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -213,3 +242,4 @@ export function DataTable<TData, TValue>({
     </div>
   );
 }
+

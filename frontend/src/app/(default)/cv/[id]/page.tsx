@@ -153,6 +153,60 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
         });
     };
 
+    const handleRoleChange = (value: string) => {
+        // Aggiorna il valore senza validazione immediata
+        setEditedData({
+            ...editedData,
+            competenze: value
+        });
+    };
+
+    const validateAndSave = async () => {
+        // Validazione del ruolo
+        const roleValue = editedData.competenze?.trim() || '';
+
+        if (roleValue.includes(' ')) {
+            toast({
+                variant: "destructive",
+                title: "Formato non valido",
+                description: "Usa trattini (-) o underscore (_) invece degli spazi. Es: backend_engineer"
+            });
+            return;
+        }
+
+        if (roleValue && !/^[a-zA-Z0-9-_]+$/.test(roleValue)) {
+            toast({
+                variant: "destructive",
+                title: "Caratteri non validi",
+                description: "Usa solo lettere, numeri, trattini (-) o underscore (_)"
+            });
+            return;
+        }
+
+        try {
+            await mutation.mutateAsync(editedData);
+            queryClient.invalidateQueries({ queryKey: ['filters'] });
+
+            toast({
+                title: "Salvato!",
+                description: "Le modifiche sono state salvate con successo",
+                variant: "success"
+            });
+
+            setIsEditing(false);
+            setEditedData({});
+        } catch (error) {
+            console.error('Error saving:', error);
+            toast({
+                variant: "destructive",
+                title: "Errore",
+                description: error instanceof Error
+                    ? error.message
+                    : "Si è verificato un errore durante il salvataggio"
+            });
+        }
+    };
+
     if (isLoading) return <Skeleton />;
     if (!cv) return <div>CV non trovato</div>;
 
@@ -196,7 +250,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                 Annulla
                             </Button>
                             <Button
-                                onClick={handleSave}
+                                onClick={validateAndSave}
                                 className="flex items-center gap-2"
                             >
                                 <Save className="h-4 w-4" />
@@ -402,7 +456,14 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                     />
                                                 </div>
                                             ) : (
-                                                <span>{cv.contratto_attuale}</span>
+                                                <div>
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="bg-[#FAEBDD] text-[#D9730D] border-transparent hover:bg-[#D9730D] hover:text-white hover:border-transparent text-base"
+                                                    >
+                                                        {cv.contratto_attuale}
+                                                    </Badge>
+                                                </div>
                                             )}
                                         </div>
                                         <div className="space-y-3 px-1">
@@ -478,7 +539,14 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                     />
                                                 </div>
                                             ) : (
-                                                <span>{cv.tipo_contratto_desiderato}</span>
+                                                <div>
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="bg-[#FAEBDD] text-[#D9730D] border-transparent hover:bg-[#D9730D] hover:text-white hover:border-transparent text-base"
+                                                    >
+                                                        {cv.tipo_contratto_desiderato}
+                                                    </Badge>
+                                                </div>
                                             )}
                                         </div>
                                         <div className="space-y-3 px-1">
@@ -519,16 +587,20 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                             <div className="pt-1">
                                                 <Input
                                                     value={editedData.competenze || ''}
-                                                    onChange={(e) => setEditedData({
-                                                        ...editedData,
-                                                        competenze: e.target.value
-                                                    })}
-                                                    placeholder="Ruolo"
+                                                    onChange={(e) => handleRoleChange(e.target.value)}
+                                                    placeholder="es: backend_engineer"
                                                     className="w-full"
                                                 />
                                             </div>
                                         ) : (
-                                            <span>{cv.competenze}</span>
+                                            <div>
+                                                <Badge
+                                                    variant="outline"
+                                                    className="bg-[#ddf4ff] text-[#0969da] border-transparent hover:bg-[#0969da] hover:text-white hover:border-transparent text-base"
+                                                >
+                                                    {cv.competenze}
+                                                </Badge>
+                                            </div>
                                         )}
                                     </div>
 
