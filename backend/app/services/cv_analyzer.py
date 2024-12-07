@@ -43,21 +43,21 @@ class CVAnalyzer:
                     "email": "mario.rossi@gmail.com",
                     "cellulare": "333123456",
                     "anni_esperienza": 5,
-                    "competenze": "Analista Funzionale",
-                    "tools": ["ACTIVE DIRECTORY", "BIZTALK", "JIRA"],
+                    "competenze": "Analista_Funzionale",
+                    "tools": ["ACTIVE_DIRECTORY", "BIZTALK", "JIRA"],
                     "database": ["MYSQL", "POSTGRESQL", "MONGODB"],
-                    "piattaforme": ["AWS", "AZURE", "GOOGLE CLOUD"],
+                    "piattaforme": ["AWS", "AZURE", "GOOGLE_CLOUD"],
                     "sistemi_operativi": ["WINDOWS", "LINUX", "MACOS"],
                     "linguaggi_programmazione": ["PYTHON", "JAVA", "C++"]
                 }
 
                 IMPORTANTE:
                 - Estrai TUTTE le tecnologie e competenze IT menzionate
-                - Separa le competenze nelle categorie corrette (tools, database, piattaforme, sistemi_operativi, linguaggi_programmazione)
+                - Separa le competenze nelle categorie corrette (tools, database, piattaforme, sistemi_operativi, linguaggi_programmazione), usa underscore (_) per separare le parole in un singolo valore array vedi esempio sopra
                 - Calcola gli anni di esperienza basandoti su tutte le esperienze lavorative IT
                 - Tutti i nomi di tecnologie devono essere in MAIUSCOLO
                 - La data di nascita DEVE essere nel formato DD/MM/YYYY
-                - il campo "competenze" indica in pratica il titolo/ruolo,quindi ha solo un valore, NON è un array
+                - il campo "competenze" indica in pratica il titolo/ruolo,quindi ha solo un valore, NON è un array e NON deve avere spazi tra parole usa underscore (_), vedi esempio sopra
                 - DEVI rispondere SOLO con un oggetto JSON valido, niente testo prima o dopo
 
                 CV da analizzare:

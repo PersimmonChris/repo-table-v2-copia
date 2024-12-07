@@ -113,21 +113,29 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
         const trimmedValue = value.trim().toUpperCase();
         if (!trimmedValue) return;
 
+        // Check per spazi nel mezzo
+        if (trimmedValue.includes(' ')) {
+            toast({
+                variant: "destructive",
+                title: "Formato non valido",
+                description: "Usa trattini (-) o underscore (_) invece degli spazi"
+            });
+            return;
+        }
+
+        // Validazione caratteri permessi
+        if (!/^[a-zA-Z0-9-_]+$/.test(trimmedValue)) {
+            toast({
+                variant: "destructive",
+                title: "Caratteri non validi",
+                description: "Usa solo lettere, numeri, trattini (-) o underscore (_)"
+            });
+            return;
+        }
+
         setEditedData(prev => {
-            // Inizializza l'array se non esiste
             const currentArray = prev[field] as string[] || [];
 
-            // Validazione
-            if (trimmedValue.length < 2) {
-                toast({
-                    variant: "destructive",
-                    title: "Errore",
-                    description: "Il valore deve essere di almeno 2 caratteri"
-                });
-                return prev;
-            }
-
-            // Controlla duplicati
             if (currentArray.includes(trimmedValue)) {
                 toast({
                     variant: "destructive",
@@ -164,12 +172,35 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
     const validateAndSave = async () => {
         // Validazione del ruolo
         const roleValue = editedData.competenze?.trim() || '';
+        const contractValue = editedData.contratto_attuale?.trim() || '';
+        const desiredContractValue = editedData.tipo_contratto_desiderato?.trim() || '';
 
+        // Validazione spazi e caratteri per ruolo
         if (roleValue.includes(' ')) {
             toast({
                 variant: "destructive",
                 title: "Formato non valido",
-                description: "Usa trattini (-) o underscore (_) invece degli spazi. Es: backend_engineer"
+                description: "Nel ruolo, usa trattini (-)o underscore (_) invece degli spazi. Es: backend_engineer"
+            });
+            return;
+        }
+
+        // Validazione spazi e caratteri per contratto attuale
+        if (contractValue.includes(' ')) {
+            toast({
+                variant: "destructive",
+                title: "Formato non valido",
+                description: "Nel contratto attuale, usa trattini (-) o underscore (_) invece degli spazi"
+            });
+            return;
+        }
+
+        // Validazione spazi e caratteri per contratto desiderato
+        if (desiredContractValue.includes(' ')) {
+            toast({
+                variant: "destructive",
+                title: "Formato non valido",
+                description: "Nel contratto desiderato, usa trattini (-) o underscore (_) invece degli spazi"
             });
             return;
         }
@@ -177,7 +208,25 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
         if (roleValue && !/^[a-zA-Z0-9-_]+$/.test(roleValue)) {
             toast({
                 variant: "destructive",
-                title: "Caratteri non validi",
+                title: "Caratteri non validi nel ruolo",
+                description: "Usa solo lettere, numeri, trattini (-) o underscore (_)"
+            });
+            return;
+        }
+
+        if (contractValue && !/^[a-zA-Z0-9-_]+$/.test(contractValue)) {
+            toast({
+                variant: "destructive",
+                title: "Caratteri non validi nel contratto attuale",
+                description: "Usa solo lettere, numeri, trattini (-) o underscore (_)"
+            });
+            return;
+        }
+
+        if (desiredContractValue && !/^[a-zA-Z0-9-_]+$/.test(desiredContractValue)) {
+            toast({
+                variant: "destructive",
+                title: "Caratteri non validi nel contratto desiderato",
                 description: "Usa solo lettere, numeri, trattini (-) o underscore (_)"
             });
             return;
