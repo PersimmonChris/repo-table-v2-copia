@@ -36,8 +36,8 @@ export function DataTableFilterSlider<TData>({
         : undefined;
 
   const formatValue = (val: number) => {
-    if (trailing === "k€") {
-      return formatCompactNumber(val) + trailing;
+    if (trailing === "€") {
+      return `${val.toLocaleString()}${trailing}`;
     }
     return `${val}${trailing ? ` ${trailing}` : ''}`;
   };
@@ -62,7 +62,7 @@ export function DataTableFilterSlider<TData>({
             value={`${filters?.[0] ?? min}`}
             min={min}
             max={max}
-            className="w-full"
+            className="w-full px-1"
             onChange={(e) => {
               const val = Number.parseInt(e.target.value) || 0;
               const newValue =
@@ -90,6 +90,7 @@ export function DataTableFilterSlider<TData>({
             value={`${filters?.[1] ?? max}`}
             min={min}
             max={max}
+            className="w-full px-1"
             onChange={(e) => {
               const val = Number.parseInt(e.target.value) || 0;
               const newValue =

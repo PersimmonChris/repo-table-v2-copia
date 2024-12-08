@@ -34,6 +34,8 @@ async def get_cvs(
     anni_esperienza_max: Optional[int] = None,
     stipendio_attuale_min: Optional[int] = None,
     stipendio_attuale_max: Optional[int] = None,
+    stipendio_desiderato_min: Optional[int] = None,
+    stipendio_desiderato_max: Optional[int] = None,
     
     # Filtri array
     tools: Optional[List[str]] = Query(None),
@@ -75,6 +77,18 @@ async def get_cvs(
             query = query.gte('anni_esperienza', anni_esperienza_min)
         if anni_esperienza_max is not None:
             query = query.lte('anni_esperienza', anni_esperienza_max)
+            
+        # Aggiungiamo i filtri per RAL attuale
+        if stipendio_attuale_min is not None:
+            query = query.gte('stipendio_attuale', stipendio_attuale_min)
+        if stipendio_attuale_max is not None:
+            query = query.lte('stipendio_attuale', stipendio_attuale_max)
+            
+        # Aggiungiamo i filtri per RAL desiderata
+        if stipendio_desiderato_min is not None:
+            query = query.gte('stipendio_desiderato', stipendio_desiderato_min)
+        if stipendio_desiderato_max is not None:
+            query = query.lte('stipendio_desiderato', stipendio_desiderato_max)
             
         # Filtri array
         if tools:

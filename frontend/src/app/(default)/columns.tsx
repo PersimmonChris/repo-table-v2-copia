@@ -144,6 +144,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       if (typeof value !== "number") return null;
       return <div className="font-mono">€ {value.toLocaleString()}</div>;
     },
+    filterFn: "inNumberRange",
   },
   {
     accessorKey: "created_at",
@@ -298,6 +299,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       if (typeof value !== "number") return null;
       return <div className="font-mono">€ {value.toLocaleString()}</div>;
     },
+    filterFn: "inNumberRange",
   },
   {
     accessorKey: "competenze",

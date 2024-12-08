@@ -58,6 +58,7 @@ class CVAnalyzer:
                 - Tutti i nomi di tecnologie devono essere in MAIUSCOLO
                 - La data di nascita DEVE essere nel formato DD/MM/YYYY
                 - il campo "competenze" indica in pratica il titolo/ruolo,quindi ha solo un valore, NON è un array e NON deve avere spazi tra parole usa underscore (_), vedi esempio sopra
+                - il campo "citta" è il luogo di residenza, se ha spazi usa underscore (_), es: San_Giovanni_in_Ponente
                 - DEVI rispondere SOLO con un oggetto JSON valido, niente testo prima o dopo
 
                 CV da analizzare:

@@ -56,6 +56,18 @@ export async function getCVs(params: GetCVsParams) {
         searchParams.set('created_at_dal', params.created_at[0].toISOString());
     }
 
+    // Aggiungiamo per RAL attuale
+    if (params.stipendio_attuale) {
+        searchParams.set('stipendio_attuale_min', params.stipendio_attuale[0].toString());
+        searchParams.set('stipendio_attuale_max', params.stipendio_attuale[1].toString());
+    }
+
+    // Aggiungiamo per RAL desiderata
+    if (params.stipendio_desiderato) {
+        searchParams.set('stipendio_desiderato_min', params.stipendio_desiderato[0].toString());
+        searchParams.set('stipendio_desiderato_max', params.stipendio_desiderato[1].toString());
+    }
+
     const response = await fetch(
         `${process.env.NEXT_PUBLIC_API_URL}/cv?${searchParams.toString()}`
     );

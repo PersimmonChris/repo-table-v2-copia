@@ -42,4 +42,6 @@ export const searchParamsParser = {
 
 };
 
+console.log('Parsed search params:', searchParamsParser);
+
 export const searchParamsCache = createSearchParamsCache(searchParamsParser);
