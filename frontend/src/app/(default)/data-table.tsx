@@ -63,8 +63,10 @@ export function DataTable<TData, TValue>({
   filterFields = [],
   pagination,
 }: DataTableProps<TData, TValue>) {
-  const [columnFilters, setColumnFilters] =
-    React.useState<ColumnFiltersState>(defaultColumnFilters);
+  const [columnFilters, setColumnFilters] = useLocalStorage<ColumnFiltersState>(
+    "tableFilters",
+    defaultColumnFilters
+  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [paginationState, setPaginationState] = React.useState<PaginationState>({
     pageIndex: 0,
@@ -77,46 +79,29 @@ export function DataTable<TData, TValue>({
     true
   );
   const [_, setSearch] = useQueryStates(searchParamsParser);
-  const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
-
-  useEffect(() => {
-    try {
-      const savedFilters = localStorage.getItem('tableFilters');
-      const savedColumnOrder = localStorage.getItem('tableColumnOrder');
-
-      if (savedFilters) {
-        setColumnFilters(JSON.parse(savedFilters));
-      }
-
-      if (savedColumnOrder) {
-        setColumnOrder(JSON.parse(savedColumnOrder));
-      }
-    } catch (error) {
-      console.error('Error parsing saved table state:', error);
-      // Pulisci il localStorage corrotto
-      localStorage.removeItem('tableFilters');
-      localStorage.removeItem('tableColumnOrder');
-    }
-  }, []);
+  const [columnOrder, setColumnOrder] = useLocalStorage<string[]>(
+    "tableColumnOrder",
+    []
+  );
 
   const table = useReactTable({
     data,
     columns,
-    state: { columnFilters, sorting, columnVisibility, pagination: paginationState, columnOrder },
+    state: {
+      columnFilters,
+      sorting,
+      columnVisibility,
+      pagination: paginationState,
+      columnOrder
+    },
     filterFns: {
       inDateRange,
     },
     onColumnVisibilityChange: setColumnVisibility,
-    onColumnFiltersChange: (filters) => {
-      setColumnFilters(filters);
-      localStorage.setItem('tableFilters', JSON.stringify(filters));
-    },
+    onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
     onPaginationChange: setPaginationState,
-    onColumnOrderChange: (order) => {
-      setColumnOrder(order);
-      localStorage.setItem('tableColumnOrder', JSON.stringify(order));
-    },
+    onColumnOrderChange: setColumnOrder,
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
