@@ -107,7 +107,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       const array = row.getValue(id);
       if (!array || !Array.isArray(array)) return false;
       if (typeof value === "string") return array.includes(value);
-      if (Array.isArray(value)) return value.some((i) => array.includes(i));
+      if (Array.isArray(value)) return value.every((i) => array.includes(i));
       return false;
     },
   },
@@ -136,7 +136,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       const array = row.getValue(id);
       if (!array || !Array.isArray(array)) return false;
       if (typeof value === "string") return array.includes(value);
-      if (Array.isArray(value)) return value.some((i) => array.includes(i));
+      if (Array.isArray(value)) return value.every((i) => array.includes(i));
       return false;
     },
   },
@@ -199,7 +199,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       const array = row.getValue(id);
       if (!array || !Array.isArray(array)) return false;
       if (typeof value === "string") return array.includes(value);
-      if (Array.isArray(value)) return value.some((i) => array.includes(i));
+      if (Array.isArray(value)) return value.every((i) => array.includes(i));
       return false;
     },
   },
@@ -225,7 +225,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       const array = row.getValue(id);
       if (!array || !Array.isArray(array)) return false;
       if (typeof value === "string") return array.includes(value);
-      if (Array.isArray(value)) return value.some((i) => array.includes(i));
+      if (Array.isArray(value)) return value.every((i) => array.includes(i));
       return false;
     },
   },
@@ -254,7 +254,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       const array = row.getValue(id);
       if (!array || !Array.isArray(array)) return false;
       if (typeof value === "string") return array.includes(value);
-      if (Array.isArray(value)) return value.some((i) => array.includes(i));
+      if (Array.isArray(value)) return value.every((i) => array.includes(i));
       return false;
     },
   },
