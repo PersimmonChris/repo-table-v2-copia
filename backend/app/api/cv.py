@@ -27,7 +27,7 @@ async def get_cvs(
     search: Optional[str] = None,  # Ricerca globale
     nome: Optional[str] = None,
     cognome: Optional[str] = None,
-    citta: Optional[str] = None,
+    citta: Optional[List[str]] = Query(None),
     
     # Filtri numerici
     anni_esperienza_min: Optional[int] = None,
@@ -68,8 +68,7 @@ async def get_cvs(
             cognome_safe = cognome.replace('%', r'\%').replace('_', r'\_')
             query = query.ilike('cognome', f"%{cognome_safe}%")
         if citta:
-            citta_safe = citta.replace('%', r'\%').replace('_', r'\_')
-            query = query.ilike('citta', f"%{citta_safe}%")
+            query = query.in_('citta', citta)
             
         # Filtri numerici
         if anni_esperienza_min is not None:
@@ -404,6 +403,28 @@ async def get_sistemi_operativi_filters():
         
         sorted_so = sorted(list(all_so))
         return {"sistemi_operativi": sorted_so}
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@router.get("/filters/citta")
+async def get_citta_filters():
+    try:
+        result = supabase.from_('cv_profiles').select('citta').execute()
+        
+        if not result.data:
+            return {"citta": []}
+            
+        # Estrai tutte le città uniche
+        all_cities = set()
+        for cv in result.data:
+            if cv.get('citta'):
+                all_cities.add(cv['citta'])
+        
+        # Ordina alfabeticamente
+        sorted_cities = sorted(list(all_cities))
+        
+        return {"citta": sorted_cities}
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

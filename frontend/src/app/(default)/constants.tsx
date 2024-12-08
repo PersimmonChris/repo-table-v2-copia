@@ -75,7 +75,15 @@ export const filterFields: DataTableFilterField<ColumnSchema>[] = [
     type: "timerange",
     defaultOpen: false,
   },
-
+  // Città
+  {
+    label: "Città",
+    value: "citta",
+    type: "checkbox",
+    defaultOpen: false,
+    enableSearch: true,
+    options: [],
+  },
   // Arrays con checkbox
   {
     label: "Tools",

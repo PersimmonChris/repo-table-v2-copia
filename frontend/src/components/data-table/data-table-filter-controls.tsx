@@ -18,7 +18,7 @@ import { DataTableFilterInput } from "./data-table-filter-input";
 import { DataTableFilterTimerange } from "./data-table-filter-timerange";
 import { X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import { getToolsFilters, getDatabaseFilters, getLinguaggiFilters, getPiattaformeFilters, getSistemiOperativiFilters } from "@/lib/api";
+import { getToolsFilters, getDatabaseFilters, getLinguaggiFilters, getPiattaformeFilters, getSistemiOperativiFilters, getCittaFilters } from "@/lib/api";
 import { DataTableFilterCommand } from "./data-table-filter-command";
 
 // FIXME: use @container (especially for the slider element) to restructure elements
@@ -64,9 +64,23 @@ export function DataTableFilterControls<TData, TValue>({
     queryFn: getSistemiOperativiFilters,
   });
 
+  const { data: citta = [] } = useQuery({
+    queryKey: ['citta-filters'],
+    queryFn: getCittaFilters,
+  });
+
   // Aggiorna le opzioni con i dati dal backend
   const updatedFilterFields = filterFields?.map(field => {
     switch (field.value) {
+      case 'citta':
+        return {
+          ...field,
+          type: 'checkbox',
+          options: citta.map(city => ({
+            label: city,
+            value: city,
+          })),
+        };
       case 'tools':
         return {
           ...field,

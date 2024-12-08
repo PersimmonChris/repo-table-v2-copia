@@ -170,17 +170,37 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
     };
 
     const validateAndSave = async () => {
-        // Validazione del ruolo
+        // Validazioni esistenti
         const roleValue = editedData.competenze?.trim() || '';
         const contractValue = editedData.contratto_attuale?.trim() || '';
         const desiredContractValue = editedData.tipo_contratto_desiderato?.trim() || '';
+        const cityValue = editedData.citta?.trim() || '';
+
+        // Validazione città
+        if (cityValue.includes(' ')) {
+            toast({
+                variant: "destructive",
+                title: "Formato non valido",
+                description: "Nella città, usa trattini (-) o underscore (_) invece degli spazi. Es: san_giovanni_rotondo"
+            });
+            return;
+        }
+
+        if (cityValue && !/^[a-zA-Z0-9-_]+$/.test(cityValue)) {
+            toast({
+                variant: "destructive",
+                title: "Caratteri non validi nella città",
+                description: "Usa solo lettere, numeri, trattini (-) o underscore (_)"
+            });
+            return;
+        }
 
         // Validazione spazi e caratteri per ruolo
         if (roleValue.includes(' ')) {
             toast({
                 variant: "destructive",
                 title: "Formato non valido",
-                description: "Nel ruolo, usa trattini (-)o underscore (_) invece degli spazi. Es: backend_engineer"
+                description: "Nel ruolo, usa trattini (-) o underscore (_) invece degli spazi. Es: backend_engineer"
             });
             return;
         }

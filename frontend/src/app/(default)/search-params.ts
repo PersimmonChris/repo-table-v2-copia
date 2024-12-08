@@ -21,10 +21,12 @@ export interface ParsedSearchParams {
   stipendio_desiderato?: number[];
   ultimo_contatto?: Date[];
   created_at?: Date[];
+  citta?: string[];
 }
 
 export const searchParamsParser = {
   // Arrays con checkbox
+  citta: parseAsArrayOf(parseAsString, ARRAY_DELIMITER),
   tools: parseAsArrayOf(parseAsString, ARRAY_DELIMITER),
   database: parseAsArrayOf(parseAsString, ARRAY_DELIMITER),
   linguaggi_programmazione: parseAsArrayOf(parseAsString, ARRAY_DELIMITER),

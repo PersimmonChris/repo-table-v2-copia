@@ -207,6 +207,25 @@ export async function getSistemiOperativiFilters(): Promise<string[]> {
     return data.sistemi_operativi;
 }
 
+export async function getCittaFilters(search?: string): Promise<string[]> {
+    const params = new URLSearchParams();
+    if (search) {
+        params.set('search', search);
+    }
+
+    const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/cv/filters/citta?${params.toString()}`
+    );
+
+    if (!response.ok) {
+        const error = await response.json().catch(() => ({}));
+        throw new Error(error.message || 'Failed to fetch città filters');
+    }
+
+    const data = await response.json();
+    return data.citta;
+}
+
 export interface UploadResponse {
     message: string;
     results: Array<{
