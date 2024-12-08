@@ -280,9 +280,9 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
     if (!cv) return <div>CV non trovato</div>;
 
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto pt-2 pb-4">
             {/* Header */}
-            <div className="mb-8 flex items-start justify-between">
+            <div className="mb-4 flex items-start justify-between">
                 <div>
                     <div className="flex items-center gap-4 mb-2">
                         <Button
@@ -341,15 +341,15 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
             {/* Sezioni */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Dati Anagrafici e Posizione Contrattuale */}
-                <Card className="p-6">
+                <Card className="p-4">
                     <Accordion type="single" collapsible defaultValue="dati-contrattuali">
                         <AccordionItem value="dati-contrattuali">
-                            <AccordionTrigger>Dati Anagrafici e Posizione Contrattuale</AccordionTrigger>
-                            <AccordionContent className="pt-2">
-                                <div className="grid gap-6">
+                            <AccordionTrigger className="py-2">Dati Anagrafici e Posizione Contrattuale</AccordionTrigger>
+                            <AccordionContent className="space-y-2 pt-1">
+                                <div className="grid gap-2">
                                     {/* Dati Anagrafici */}
                                     <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Nome:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -367,7 +367,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 <span>{cv.nome}</span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Cognome:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -385,25 +385,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 <span>{cv.cognome}</span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Città:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        value={editedData.citta || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            citta: e.target.value
-                                                        })}
-                                                        placeholder="Città"
-                                                        className="w-full"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>{cv.citta}</span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Cellulare:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -421,26 +403,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 <span>{cv.cellulare}</span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
-                                            <span className="font-medium block">Anni Esperienza:</span>
-                                            {isEditing ? (
-                                                <div className="pt-1">
-                                                    <Input
-                                                        type="number"
-                                                        value={editedData.anni_esperienza || ''}
-                                                        onChange={(e) => setEditedData({
-                                                            ...editedData,
-                                                            anni_esperienza: parseInt(e.target.value) || 0
-                                                        })}
-                                                        placeholder="Anni esperienza"
-                                                        className="w-full"
-                                                    />
-                                                </div>
-                                            ) : (
-                                                <span>{cv.anni_esperienza}</span>
-                                            )}
-                                        </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Email:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -459,7 +422,68 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 <span>{cv.email}</span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
+                                            <span className="font-medium block">Data di Nascita:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="date"
+                                                        value={editedData.data_nascita ?
+                                                            new Date(editedData.data_nascita).toISOString().split('T')[0] :
+                                                            ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            data_nascita: e.target.value ? new Date(e.target.value) : null
+                                                        })}
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>
+                                                    {cv.data_nascita
+                                                        ? format(new Date(cv.data_nascita), "dd/MM/yyyy")
+                                                        : "N/A"}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-2 px-1">
+                                            <span className="font-medium block">Città:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        value={editedData.citta || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            citta: e.target.value
+                                                        })}
+                                                        placeholder="Città"
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>{cv.citta}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-2 px-1">
+                                            <span className="font-medium block">Anni Esperienza:</span>
+                                            {isEditing ? (
+                                                <div className="pt-1">
+                                                    <Input
+                                                        type="number"
+                                                        value={editedData.anni_esperienza || ''}
+                                                        onChange={(e) => setEditedData({
+                                                            ...editedData,
+                                                            anni_esperienza: parseInt(e.target.value) || 0
+                                                        })}
+                                                        placeholder="Anni esperienza"
+                                                        className="w-full"
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <span>{cv.anni_esperienza}</span>
+                                            )}
+                                        </div>
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Ultimo Contatto:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -483,7 +507,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1 col-span-2">
+                                        <div className="space-y-2 px-1 col-span-2">
                                             <span className="font-medium block">Note:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -510,7 +534,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
 
                                     {/* Posizione Contrattuale */}
                                     <div className="grid grid-cols-2 gap-6">
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Contratto Attuale:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -535,7 +559,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Stipendio Attuale:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -554,7 +578,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 <span>€ {cv.stipendio_attuale?.toLocaleString()}</span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Scadenza Contratto:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -577,7 +601,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 </span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Preavviso:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -594,7 +618,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 <span>{cv.preavviso}</span>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Contratto Desiderato:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -618,7 +642,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                                 </div>
                                             )}
                                         </div>
-                                        <div className="space-y-3 px-1">
+                                        <div className="space-y-2 px-1">
                                             <span className="font-medium block">Stipendio Desiderato:</span>
                                             {isEditing ? (
                                                 <div className="pt-1">
@@ -644,13 +668,13 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                 </Card>
 
                 {/* Competenze */}
-                <Card className="p-6">
+                <Card className="p-4">
                     <Accordion type="single" collapsible defaultValue="competenze">
                         <AccordionItem value="competenze">
-                            <AccordionTrigger>Competenze</AccordionTrigger>
+                            <AccordionTrigger className="py-2">Competenze</AccordionTrigger>
                             <AccordionContent className="pt-2">
                                 <div className="grid gap-6">
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-2 px-1">
                                         <span className="font-medium block">Ruolo:</span>
                                         {isEditing ? (
                                             <div className="pt-1">
@@ -674,7 +698,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                     </div>
 
                                     {/* Tools */}
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-2 px-1">
                                         <span className="font-medium block">Tools:</span>
                                         {isEditing ? (
                                             <div className="space-y-2">
@@ -730,7 +754,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                     </div>
 
                                     {/* Database */}
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-2 px-1">
                                         <span className="font-medium block">Database:</span>
                                         {isEditing ? (
                                             <div className="space-y-2">
@@ -786,7 +810,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                     </div>
 
                                     {/* Linguaggi di Programmazione */}
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-2 px-1">
                                         <span className="font-medium block">Linguaggi di Programmazione:</span>
                                         {isEditing ? (
                                             <div className="space-y-2">
@@ -842,7 +866,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                     </div>
 
                                     {/* Piattaforme */}
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-2 px-1">
                                         <span className="font-medium block">Piattaforme:</span>
                                         {isEditing ? (
                                             <div className="space-y-2">
@@ -898,7 +922,7 @@ export default function CVDetailPage({ params }: { params: { id: string } }) {
                                     </div>
 
                                     {/* Sistemi Operativi */}
-                                    <div className="space-y-3 px-1">
+                                    <div className="space-y-2 px-1">
                                         <span className="font-medium block">Sistemi Operativi:</span>
                                         {isEditing ? (
                                             <div className="space-y-2">
