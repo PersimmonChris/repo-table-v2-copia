@@ -36,7 +36,6 @@ export function DataTableViewOptions<TData>({
 }: DataTableViewOptionsProps<TData>) {
   const [open, setOpen] = useState(false);
   const [drag, setDrag] = useState(false);
-  const [search, setSearch] = useState("");
 
   const columnOrder = table.getState().columnOrder;
 
@@ -69,11 +68,6 @@ export function DataTableViewOptions<TData>({
       </PopoverTrigger>
       <PopoverContent side="bottom" align="end" className="w-[200px] p-0">
         <Command>
-          <CommandInput
-            value={search}
-            onValueChange={setSearch}
-            placeholder="Cerca colonne..."
-          />
           <CommandList>
             <CommandEmpty>Nessuna colonna trovata.</CommandEmpty>
             <CommandGroup>
@@ -110,7 +104,7 @@ export function DataTableViewOptions<TData>({
                         <Check className={cn("h-4 w-4")} />
                       </div>
                       <span>{column.columnDef.meta?.label || column.id}</span>
-                      {enableOrdering && !search ? (
+                      {enableOrdering ? (
                         <SortableDragHandle
                           variant="ghost"
                           size="icon"

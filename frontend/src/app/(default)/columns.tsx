@@ -56,6 +56,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Data di Nascita" />
     ),
+    meta: {
+      label: "data nascita"
+    },
     cell: ({ row }) => {
       const value = row.getValue("data_nascita");
       if (!value || !(typeof value === 'string' || value instanceof Date)) {
@@ -73,6 +76,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Anni Esp." />
     ),
+    meta: {
+      label: "anni esperienza"
+    },
     cell: ({ row }) => {
       const value = row.getValue("anni_esperienza");
       if (typeof value !== "number") return null;
@@ -111,7 +117,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
       <DataTableColumnHeader column={column} title="Linguaggi" />
     ),
     meta: {
-      label: "Linguaggi"
+      label: "linguaggi"
     },
     cell: ({ row }) => {
       const value = row.getValue("linguaggi_programmazione");
@@ -139,6 +145,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="RAL Attuale" />
     ),
+    meta: {
+      label: "ral attuale"
+    },
     cell: ({ row }) => {
       const value = row.getValue("stipendio_attuale");
       if (typeof value !== "number") return null;
@@ -151,6 +160,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Data Inserimento" />
     ),
+    meta: {
+      label: "data inserimento"
+    },
     cell: ({ row }) => {
       const value = row.getValue("created_at");
       if (!value || (typeof value !== 'string' && !(value instanceof Date))) return null;
@@ -222,6 +234,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Sistemi Operativi" />
     ),
+    meta: {
+      label: "sistemi operativi"
+    },
     cell: ({ row }) => {
       const value = row.getValue("sistemi_operativi");
       if (!value || !Array.isArray(value)) return null;
@@ -248,6 +263,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contratto" />
     ),
+    meta: {
+      label: "contratto attuale"
+    },
     cell: ({ row }) => {
       const value = row.getValue("contratto_attuale");
       if (typeof value !== "string") return null;
@@ -266,6 +284,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Scadenza" />
     ),
+    meta: {
+      label: "scadenza contratto"
+    },
     cell: ({ row }) => {
       const value = row.getValue("scadenza_contratto");
       if (!value || !(typeof value === 'string' || value instanceof Date)) {
@@ -294,6 +315,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="RAL Desiderata" />
     ),
+    meta: {
+      label: "ral desiderata"
+    },
     cell: ({ row }) => {
       const value = row.getValue("stipendio_desiderato");
       if (typeof value !== "number") return null;
@@ -333,6 +357,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Ultimo Contatto" />
     ),
+    meta: {
+      label: "ultimo contatto"
+    },
     cell: ({ row }) => {
       const value = row.getValue("ultimo_contatto");
       if (!value || (typeof value !== 'string' && !(value instanceof Date))) return "N/A";
@@ -348,6 +375,9 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Contratto Desiderato" />
     ),
+    meta: {
+      label: "contratto desiderato"
+    },
     cell: ({ row }) => {
       const value = row.getValue("tipo_contratto_desiderato");
       if (typeof value !== "string") return null;

@@ -67,7 +67,10 @@ export function DataTable<TData, TValue>({
     "tableFilters",
     defaultColumnFilters
   );
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sorting, setSorting] = useLocalStorage<SortingState>(
+    "tableSorting",
+    []
+  );
   const [paginationState, setPaginationState] = React.useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10,
