@@ -17,7 +17,7 @@ router = APIRouter(prefix="/cv", tags=["cv"])
 async def get_cvs(
     # Paginazione
     page: int = Query(1, ge=1),
-    page_size: int = Query(10, ge=1, le=100),
+    page_size: int = Query(10, ge=1, le=5000),
     
     # Ordinamento
     sort_by: str = Query(None),
@@ -52,9 +52,14 @@ async def get_cvs(
 ):
     try:
         print("Backend received date:", created_at_dal)
+        # Query base per il conteggio totale senza filtri
+        total_query = supabase.from_('cv_profiles').select('*', count='exact')
+        total_count = total_query.execute().count
+
+        # Query per i dati filtrati
         query = supabase.from_('cv_profiles').select('*', count='exact')
         
-        # Applicazione filtri
+        # Applica tutti i filtri
         if search:
             search_safe = search.replace('%', r'\%').replace('_', r'\_')
             query = query.or_(
@@ -127,16 +132,19 @@ async def get_cvs(
         else:
             query = query.order('created_at', desc=True)
             
-        # Paginazione
+        # Ottieni il conteggio dei risultati filtrati PRIMA della paginazione
+        filtered_result = query.execute()
+        filtered_count = filtered_result.count
+
+        # Applica la paginazione alla query originale
         start = (page - 1) * page_size
         end = start + page_size - 1
-        query = query.range(start, end)
-        
-        result = query.execute()
+        paged_result = query.range(start, end).execute()
         
         return {
-            "items": result.data,
-            "total": result.count if result.count is not None else 0,
+            "items": paged_result.data,
+            "total": total_count,  # totale senza filtri
+            "filtered_total": filtered_count,  # totale con filtri applicati
             "page": page,
             "page_size": page_size
         }

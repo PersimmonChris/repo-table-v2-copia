@@ -34,11 +34,11 @@ export function DataTablePagination<TData>({
             table.setPageSize(Number(value));
           }}
         >
-          <SelectTrigger className="h-8 w-[70px]">
+          <SelectTrigger className="h-8 w-[90px]">
             <SelectValue placeholder={table.getState().pagination.pageSize} />
           </SelectTrigger>
           <SelectContent side="top">
-            {[10, 20, 30, 40, 50].map((pageSize) => (
+            {[30, 60, 100, 500, 1000, 5000].map((pageSize) => (
               <SelectItem key={pageSize} value={`${pageSize}`}>
                 {pageSize}
               </SelectItem>
@@ -54,9 +54,7 @@ export function DataTablePagination<TData>({
         <Button
           variant="outline"
           className="hidden h-8 w-8 p-0 lg:flex"
-          onClick={() => {
-            table.setPageIndex(0);
-          }}
+          onClick={() => table.setPageIndex(0)}
           disabled={!table.getCanPreviousPage()}
         >
           <span className="sr-only">Vai alla prima pagina</span>
@@ -65,9 +63,7 @@ export function DataTablePagination<TData>({
         <Button
           variant="outline"
           className="h-8 w-8 p-0"
-          onClick={() => {
-            table.previousPage();
-          }}
+          onClick={() => table.previousPage()}
           disabled={!table.getCanPreviousPage()}
         >
           <span className="sr-only">Vai alla pagina precedente</span>
@@ -76,9 +72,7 @@ export function DataTablePagination<TData>({
         <Button
           variant="outline"
           className="h-8 w-8 p-0"
-          onClick={() => {
-            table.nextPage();
-          }}
+          onClick={() => table.nextPage()}
           disabled={!table.getCanNextPage()}
         >
           <span className="sr-only">Vai alla pagina successiva</span>
@@ -87,12 +81,10 @@ export function DataTablePagination<TData>({
         <Button
           variant="outline"
           className="hidden h-8 w-8 p-0 lg:flex"
-          onClick={() => {
-            table.setPageIndex(table.getPageCount() - 1);
-          }}
+          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
           disabled={!table.getCanNextPage()}
         >
-          <span className="sr-only">Vai alla pagina finale</span>
+          <span className="sr-only">Vai all'ultima pagina</span>
           <ChevronsRight className="h-4 w-4" />
         </Button>
       </div>

@@ -8,14 +8,15 @@ import { Skeleton } from "./skeleton";
 import { getCVs, type GetCVsParams } from "@/lib/api";
 import { useQuery } from "@tanstack/react-query";
 import * as React from "react";
+import { useLocalStorage } from "@/hooks/use-local-storage";
 
 export default function Page({
   searchParams,
 }: {
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
-  const [page, setPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(10);
+  const [pageIndex, setPageIndex] = useLocalStorage<number>("tablePage", 0);
+  const [pageSize, setPageSize] = useLocalStorage<number>("tablePageSize", 100);
 
   React.useEffect(() => {
     const url = new URL(window.location.href);
@@ -76,11 +77,11 @@ export default function Page({
   }
 
   const { data: cvData, isLoading } = useQuery({
-    queryKey: ['cvs', parsedSearch, page, pageSize],
+    queryKey: ['cvs', parsedSearch, pageIndex, pageSize],
     queryFn: async () => {
       try {
         const params: GetCVsParams = {
-          page,
+          page: pageIndex + 1,
           page_size: pageSize,
           tools: parsedSearch.tools,
           database: parsedSearch.database,
@@ -105,7 +106,7 @@ export default function Page({
         return await getCVs(params);
       } catch (error) {
         console.error('Error fetching data:', error);
-        return { items: [], total: 0, page: 1, page_size: 10 };
+        return { items: [], total: 0, page: 1, page_size: 100 };
       }
     },
     refetchOnWindowFocus: false,
@@ -118,6 +119,7 @@ export default function Page({
       <DataTable
         columns={columns}
         data={cvData?.items ?? []}
+        total={cvData?.total}
         filterFields={filterFields}
         defaultColumnFilters={Object.entries(parsedSearch)
           .map(([key, value]) => ({
@@ -126,10 +128,10 @@ export default function Page({
           }))
           .filter(({ value }) => value !== undefined)}
         pagination={{
-          pageIndex: page - 1,
+          pageIndex: pageIndex,
           pageSize,
           pageCount: Math.ceil((cvData?.total ?? 0) / pageSize),
-          onPageChange: (newPage) => setPage(newPage + 1),
+          onPageChange: setPageIndex,
           onPageSizeChange: setPageSize,
         }}
       />

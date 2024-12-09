@@ -13,6 +13,7 @@ import { DataTableViewOptions } from "./data-table-view-options";
 import { useEffect } from "react";
 import { Kbd } from "@/components/custom/kbd";
 import { UploadButton } from "@/components/upload/upload-button";
+import { DataTablePagination } from "./data-table-pagination";
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>;
@@ -79,8 +80,13 @@ export function DataTableToolbar<TData>({
           </Tooltip>
         </TooltipProvider>
         <p className="text-sm text-muted-foreground">
-          {table.getFilteredRowModel().rows.length} di{" "}
-          {table.getCoreRowModel().rows.length} righe filtrate
+          {table.getRowModel().rows.length} di{" "}
+          {table.getState().pagination.pageSize} risultati filtrati
+          {(table.options.meta as any)?.total && (
+            <span className="ml-1 text-muted-foreground">
+              (su {(table.options.meta as any)?.total} totali)
+            </span>
+          )}
         </p>
         {isLoading ? (
           <LoaderCircle className="ml-2 h-4 w-4 animate-spin text-muted-foreground" />
@@ -97,6 +103,7 @@ export function DataTableToolbar<TData>({
             Reset
           </Button>
         ) : null}
+        <DataTablePagination table={table} />
         <UploadButton />
         <DataTableViewOptions
           table={table}

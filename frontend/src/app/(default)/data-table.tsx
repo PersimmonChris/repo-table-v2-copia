@@ -45,6 +45,7 @@ import { inDateRange } from "@/lib/table/filterfns";
 export interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  total?: number;
   defaultColumnFilters?: ColumnFiltersState;
   filterFields?: DataTableFilterField<TData>[];
   pagination?: {
@@ -59,6 +60,7 @@ export interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({
   columns,
   data,
+  total,
   defaultColumnFilters = [],
   filterFields = [],
   pagination,
@@ -71,10 +73,6 @@ export function DataTable<TData, TValue>({
     "tableSorting",
     []
   );
-  const [paginationState, setPaginationState] = React.useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 10,
-  });
   const [columnVisibility, setColumnVisibility] =
     useLocalStorage<VisibilityState>("data-table-visibility", {});
   const [controlsOpen, setControlsOpen] = useLocalStorage(
@@ -86,6 +84,8 @@ export function DataTable<TData, TValue>({
     "tableColumnOrder",
     []
   );
+  const [pageIndex, setPageIndex] = useLocalStorage<number>("tablePage", 0);
+  const [pageSize, setPageSize] = useLocalStorage<number>("tablePageSize", 100);
 
   const table = useReactTable({
     data,
@@ -94,37 +94,44 @@ export function DataTable<TData, TValue>({
       columnFilters,
       sorting,
       columnVisibility,
-      pagination: paginationState,
+      pagination: pagination
+        ? {
+          pageIndex: pagination.pageIndex,
+          pageSize: pagination.pageSize,
+        }
+        : { pageIndex: 0, pageSize: 10 },
       columnOrder
     },
+    manualPagination: true,
+    pageCount: pagination?.pageCount ?? -1,
     filterFns: {
       inDateRange,
     },
     onColumnVisibilityChange: setColumnVisibility,
     onColumnFiltersChange: setColumnFilters,
     onSortingChange: setSorting,
-    onPaginationChange: setPaginationState,
+    onPaginationChange: (updater) => {
+      if (pagination) {
+        const newState =
+          typeof updater === 'function'
+            ? updater({ pageIndex: pagination.pageIndex, pageSize: pagination.pageSize })
+            : updater;
+
+        pagination.onPageChange(newState.pageIndex);
+        if (newState.pageSize !== pagination.pageSize) {
+          pagination.onPageSizeChange(newState.pageSize);
+        }
+      }
+    },
     onColumnOrderChange: setColumnOrder,
     getSortedRowModel: getSortedRowModel(),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    getFacetedUniqueValues: (table: TTable<TData>, columnId: string) => () => {
-      const map = getFacetedUniqueValues<TData>()(table, columnId)();
-      // TODO: it would be great to do it dynamically, if we recognize the row to be Array.isArray
-      if (["regions", "tags"].includes(columnId)) {
-        const rowValues = table
-          .getGlobalFacetedRowModel()
-          .flatRows.map((row) => row.getValue(columnId) as string[]);
-        for (const values of rowValues) {
-          for (const value of values) {
-            const prevValue = map.get(value) || 0;
-            map.set(value, prevValue + 1);
-          }
-        }
-      }
-      return map;
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    meta: {
+      total: total
     },
   });
 
@@ -225,7 +232,6 @@ export function DataTable<TData, TValue>({
             </TableBody>
           </Table>
         </div>
-        <DataTablePagination table={table} />
       </div>
     </div>
   );
