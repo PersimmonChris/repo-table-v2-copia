@@ -6,6 +6,8 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 import { ReactQueryProvider } from "@/providers/react-query";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/toaster";
+import { createClient } from "@/utils/supabase/server"
+import { cookies } from "next/headers"
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -17,11 +19,15 @@ export const metadata: Metadata = {
   description: "Gestione CV",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = cookies()
+  const supabase = createClient(cookieStore)
+  const { data: { session } } = await supabase.auth.getSession()
+
   return (
     <html lang="en">
       <ReactQueryProvider>
@@ -33,7 +39,7 @@ export default function RootLayout({
         >
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <div className="relative flex min-h-screen flex-col">
-              <Header />
+              <Header user={session?.user} />
               <main className="flex-1">{children}</main>
               <Toaster />
             </div>

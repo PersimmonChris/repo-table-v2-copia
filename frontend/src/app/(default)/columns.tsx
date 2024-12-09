@@ -33,7 +33,7 @@ export const columns: ColumnDef<ColumnSchema>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Cognome" />
     ),
-    enableHiding: false,
+    // enableHiding: false,
     cell: ({ row }) => {
       const value = row.getValue("cognome");
       if (typeof value !== "string") return null;
