@@ -141,8 +141,9 @@ export function DataTableFilterControls<TData, TValue>({
               variant="ghost"
               size="sm"
               onClick={() => table.resetColumnFilters()}
+              className="text-[#DFAB01] font-bold hover:bg-transparent hover:text-[#DFAB01]"
             >
-              <X className="mr-2 h-4 w-4" />
+              <X className="mr-2 h-4 w-4 text-[#DFAB01]" />
               Reset
             </Button>
           ) : null}

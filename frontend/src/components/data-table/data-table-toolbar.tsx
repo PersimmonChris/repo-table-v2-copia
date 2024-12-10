@@ -44,7 +44,7 @@ export function DataTableToolbar<TData>({
   }, [setControlsOpen]);
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <TooltipProvider>
           <Tooltip>
@@ -92,14 +92,15 @@ export function DataTableToolbar<TData>({
           <LoaderCircle className="ml-2 h-4 w-4 animate-spin text-muted-foreground" />
         ) : null}
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-1">
         {filters.length ? (
           <Button
-            size="sm"
             variant="ghost"
+            size="sm"
             onClick={() => table.resetColumnFilters()}
+            className="text-[#DFAB01] font-bold hover:bg-transparent hover:text-[#DFAB01]"
           >
-            <X className="mr-2 h-4 w-4" />
+            <X className="mr-1 h-4 w-4 text-[#DFAB01]" />
             Reset
           </Button>
         ) : null}

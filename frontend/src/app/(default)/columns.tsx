@@ -5,8 +5,23 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
 import { format } from "date-fns";
 import type { ColumnSchema } from "./schema";
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { Edit2, Trash2 } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { useRouter } from "next/navigation"
+import { useToast } from "@/hooks/use-toast"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
+import { useQueryClient } from "@tanstack/react-query"
 
 export const columns: ColumnDef<ColumnSchema>[] = [
   {
@@ -389,6 +404,112 @@ export const columns: ColumnDef<ColumnSchema>[] = [
           {value}
         </Badge>
       );
+    },
+  },
+  {
+    accessorKey: "actions",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Azioni" />
+    ),
+    enableSorting: false,
+    enableHiding: true,
+    meta: {
+      label: "Azioni"
+    },
+    cell: ({ row, table }) => {
+      const router = useRouter()
+      const { toast } = useToast()
+      const [openConfirm, setOpenConfirm] = useState(false)
+      const queryClient = useQueryClient()
+
+      const handleDelete = async () => {
+        try {
+          const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/cv/${row.original.id}`, {
+            method: 'DELETE',
+          })
+
+          if (!response.ok) throw new Error("Errore durante l'eliminazione")
+
+          toast({
+            title: "CV eliminato",
+            description: "Il CV è stato eliminato con successo",
+            variant: "success",
+          })
+
+          setOpenConfirm(false)
+
+          // Invalidiamo tutte le query relative ai CV e filtri
+          await queryClient.invalidateQueries({ queryKey: ['cvs'] })
+          // Filtri array
+          await queryClient.invalidateQueries({ queryKey: ['tools-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['database-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['linguaggi-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['piattaforme-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['sistemi-operativi-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['citta-filters'] })
+          // Filtri date
+          await queryClient.invalidateQueries({ queryKey: ['ultimo-contatto-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['data-inserimento-filters'] })
+          // Filtri range
+          await queryClient.invalidateQueries({ queryKey: ['anni-esperienza-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['ral-attuale-filters'] })
+          await queryClient.invalidateQueries({ queryKey: ['ral-desiderata-filters'] })
+
+        } catch (error) {
+          toast({
+            title: "Errore",
+            description: "Impossibile eliminare il CV",
+            variant: "destructive",
+          })
+        }
+      }
+
+      return (
+        <>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => {
+                router.push(`/cv/${row.original.id}`)
+              }}
+              className="h-8 w-8 p-0"
+            >
+              <Edit2 className="h-4 w-4 text-blue-600" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setOpenConfirm(true)}
+              className="h-8 w-8 p-0 hover:bg-red-100 hover:text-red-600"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <AlertDialog open={openConfirm} onOpenChange={setOpenConfirm}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Elimina CV</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Sei sicuro di voler eliminare questo CV? Questa azione non può essere annullata.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel onClick={() => setOpenConfirm(false)}>
+                  Annulla
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-red-600 hover:bg-red-700"
+                >
+                  Elimina
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )
     },
   },
 ];

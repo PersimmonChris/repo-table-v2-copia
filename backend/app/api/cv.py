@@ -99,8 +99,11 @@ async def get_cvs(
         if tools:
             print("\n=== TOOLS FILTER DEBUG ===")
             print(f"Received tools: {tools}")
+            # Se tools è una stringa, convertiamola in lista
+            if isinstance(tools, str):
+                tools = [tools]
             query = query.contains('tools', tools)
-            print("Query:", query._compiler().get_sql())
+            
         if database:
             query = query.contains('database', database)
         if piattaforme:
@@ -136,15 +139,35 @@ async def get_cvs(
         filtered_result = query.execute()
         filtered_count = filtered_result.count
 
-        # Applica la paginazione alla query originale
+        # Verifica che la pagina richiesta sia valida
+        total_pages = (filtered_count + page_size - 1) // page_size
+        if page > total_pages and total_pages > 0:
+            page = total_pages
+
+        # Calcola start e end per la paginazione
         start = (page - 1) * page_size
-        end = start + page_size - 1
-        paged_result = query.range(start, end).execute()
+        end = min(start + page_size - 1, filtered_count - 1)
+        
+        # Se non ci sono risultati, restituisci una lista vuota senza fare la query
+        if filtered_count == 0:
+            return {
+                "items": [],
+                "total": total_count,
+                "filtered_total": 0,
+                "page": 1,
+                "page_size": page_size
+            }
+
+        # Applica la paginazione solo se ci sono risultati
+        if end >= start:
+            paged_result = query.range(start, end).execute()
+        else:
+            paged_result = {"data": []}
         
         return {
             "items": paged_result.data,
-            "total": total_count,  # totale senza filtri
-            "filtered_total": filtered_count,  # totale con filtri applicati
+            "total": total_count,
+            "filtered_total": filtered_count,
             "page": page,
             "page_size": page_size
         }
