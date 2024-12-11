@@ -1,1 +1,11 @@
 template/
+# Next.js generated files
+# Next.js generated files (specific to data-table-filters)
+data-table-filters/.next/
+
+# GitHub Actions workflows
+.github/workflows/
+
+# SQL files not used in the project
+create_table.sql
+supabase.sql

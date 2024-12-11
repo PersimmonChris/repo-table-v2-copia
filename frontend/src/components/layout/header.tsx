@@ -14,13 +14,15 @@ import {
 import { createClient } from "@/utils/supabase/client"
 import { useRouter } from "next/navigation"
 import { useState, useEffect } from 'react'
+import { HeaderProps } from '@/types/supabase'
+import { User } from '@supabase/supabase-js'
 
-export function Header() {
+export function Header({ user: initialUser }: HeaderProps) {
     const router = useRouter()
     const supabase = createClient()
     const [displayName, setDisplayName] = useState<string>('')
-    const [user, setUser] = useState<any>(null)
-    const [loading, setLoading] = useState(true)
+    const [user, setUser] = useState<User | null>(initialUser || null)
+    const [loading, setLoading] = useState(!initialUser)
 
     useEffect(() => {
         async function loadUserData() {

@@ -7,7 +7,8 @@ import { ReactQueryProvider } from "@/providers/react-query";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/toaster";
 import { createClient } from "@/utils/supabase/server"
-import { cookies } from "next/headers"
+import { headers, cookies } from 'next/headers'
+import { ErrorBoundary } from '@/components/error-boundary'
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -37,13 +38,15 @@ export default async function RootLayout({
             fontSans.variable
           )}
         >
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <div className="relative flex min-h-screen flex-col">
-              <Header user={session?.user} />
-              <main className="flex-1">{children}</main>
-              <Toaster />
-            </div>
-          </ThemeProvider>
+          <ErrorBoundary>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <div className="relative flex min-h-screen flex-col">
+                <Header user={session?.user} />
+                <main className="flex-1">{children}</main>
+                <Toaster />
+              </div>
+            </ThemeProvider>
+          </ErrorBoundary>
         </body>
       </ReactQueryProvider>
     </html>
